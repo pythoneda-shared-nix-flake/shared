@@ -1,0 +1,1 @@
+      inputs.{dependency}.follows = "{dependency}";

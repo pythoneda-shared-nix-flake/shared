@@ -1,0 +1,6 @@
+    pythoneda-shared-pythoneda-banner = {{
+      url = "github:pythoneda-shared-pythoneda/banner/{pythoneda_shared_pythoneda_banner_version}";
+      inputs.nixos.follows = "nixos";
+      inputs.flake-utils.follows = "flake-utils";
+    }};
+{flake_dependencies_as_inputs}

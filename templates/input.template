@@ -1,0 +1,6 @@
+    {input_name} = {{
+      url = "{input_url}";
+      inputs.nixos.follows = "nixos";
+      inputs.flake-utils.follows = "flake-utils";
+{input_follows}
+    }};
