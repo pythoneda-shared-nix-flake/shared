@@ -1,7 +1,7 @@
 """
-pythoneda/shared/nix_flake/__init__.py
+pythoneda/shared/nix_flake/licenses/__init__.py
 
-This file ensures pythoneda.shared.nix_flake is a package.
+This file ensures pythoneda.shared.nix_flake.licenses is a package.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -20,10 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from .license import License
-from .nix_flake_input import NixFlakeInput
-from .nix_flake import NixFlake
-from .nixos_2305_input import Nixos2305Input
-from .flake_utils_input import FlakeUtilsInput
-from .pythoneda_shared_pythoneda_banner_input import PythonedaSharedPythonedaBannerInput
-from .pythoneda_nix_flake import PythonedaNixFlake
+from .gpl3 import Gpl3
+from .mit import Mit
+from .asl20 import Asl20

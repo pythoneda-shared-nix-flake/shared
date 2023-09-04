@@ -1,7 +1,7 @@
 """
-pythoneda/shared/nix_flake/__init__.py
+pythoneda/shared/nix_flake/flake_utils_input.py
 
-This file ensures pythoneda.shared.nix_flake is a package.
+This file defines the FlakeUtilsInput class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -18,12 +18,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+from pythoneda.shared.nix_flake import NixFlakeInput
 
-from .license import License
-from .nix_flake_input import NixFlakeInput
-from .nix_flake import NixFlake
-from .nixos_2305_input import Nixos2305Input
-from .flake_utils_input import FlakeUtilsInput
-from .pythoneda_shared_pythoneda_banner_input import PythonedaSharedPythonedaBannerInput
-from .pythoneda_nix_flake import PythonedaNixFlake
+class FlakeUtilsInput(NixFlakeInput):
+
+    """
+    Represents the input for flake-utils.
+
+    Class name: FlakeUtilsInput
+
+    Responsibilities:
+        - Represents the information about flake-utils flake.
+
+    Collaborators:
+        - None
+    """
+
+    def __init__(self):
+        """
+        Creates a new FlakeUtilsInput instance.
+        """
+        super().__init__("flake-utils", "github:numtide/flake-utils/v1.0.0")

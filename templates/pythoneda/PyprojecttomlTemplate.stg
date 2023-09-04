@@ -1,0 +1,46 @@
+// templates/pythoneda/PyprojecttomlTemplate.stg
+//
+// This file defines the template for PythonEDA-related pyprojecttoml.template files.
+//
+// Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+group PyprojecttomlTemplate;
+
+// declaring_package_inputs
+// - flake: The flake.
+declaring_package_inputs(flake) ::= <<
+<flake.package_inputs: { dep | <dep.name> = "^@<dep.name_in_camel_case>@"
+}>
+>>
+
+// root template
+// -flake: The flake.
+root(flake) ::= <<
+<flake.license_text_with_hash>
+[tool.poetry]
+name = "@pname@"
+version = "@version@"
+description = "@desc@"
+authors = [ @authors@ ]
+packages = [{include = "@package@"}]
+
+[tool.poetry.dependencies]
+python = "^@pythonMajorMinor@"
+<declaring_package_inputs(flake)>
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+>>
