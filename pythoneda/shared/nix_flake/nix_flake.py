@@ -95,6 +95,18 @@ class NixFlake(Entity):
         self._copyright_holder = copyrightHolder
         for input in inputs:
             input.bind(self)
+        print(f'** received inputs **')
+        for input in inputs:
+            print(f'- {input.name}')
+
+    @classmethod
+    def empty(cls):
+        """
+        Builds an empty instance. Required for unmarshalling.
+        :return: An empty instance.
+        :rtype: pythoneda.ValueObject
+        """
+        return cls(None, None, [], None, None, None, None, None, [], None, None)
 
     @property
     @primary_key_attribute
@@ -269,6 +281,7 @@ class NixFlake(Entity):
         :rtype: str
         """
 #        return Path(self.parent_folder(self.parent_folder(self.parent_folder(self.parent_folder(__file__))))) / "templates"
+#        TODO: fix hardcoded path
         return "/home/chous/github/pythoneda/pythoneda-shared-nix-flake/shared/templates"
 
     def generate_flake(self, flakeFolder:str):
@@ -312,8 +325,6 @@ class NixFlake(Entity):
 
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))
-
-        print(str(root_template))
 
     def git_add_files(self, gitAdd):
         """

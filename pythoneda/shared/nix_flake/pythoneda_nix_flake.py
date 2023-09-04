@@ -76,6 +76,15 @@ class PythonedaNixFlake(NixFlake):
         self._pescio_space = pescioSpace
         self._hexagonal_layer = hexagonalLayer
 
+    @classmethod
+    def empty(cls):
+        """
+        Builds an empty instance. Required for unmarshalling.
+        :return: An empty instance.
+        :rtype: pythoneda.ValueObject
+        """
+        return cls(None, None, [], None, None, None, None, None, None)
+
     @property
     @attribute
     def package_inputs(self) -> List:
