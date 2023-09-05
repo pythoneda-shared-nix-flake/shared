@@ -74,7 +74,7 @@ class License(Entity, abc.ABC):
         return self.__class__.id()
 
     @classmethod
-    def from_id(cls, id:str, copyrightYear:int, copyrightHolder:str):
+    def from_id(cls, id:str, copyrightYear:int, copyrightHolder:str, url:str):
         """
         Retrieves the license for given id, customized for given copyright information.
         :param id: The license id.
@@ -83,12 +83,14 @@ class License(Entity, abc.ABC):
         :type copyrightYear: int
         :param copyrightHolder: The copyright holder.
         :type copyrightHolder: str
+        :param url: The project url.
+        :type url: str
         :return: The license, of None if none found.
         :rtype: pythoneda.shared.nix_flake.License
         """
         result = None
         for license_class in License.__subclasses__():
             if license_class.id() == id:
-                result = license_class(copyrightYear, copyrightHolder)
+                result = license_class(copyrightYear, copyrightHolder, url)
                 break
         return result

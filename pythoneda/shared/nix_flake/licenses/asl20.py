@@ -34,21 +34,24 @@ class Asl20(License):
     Collaborators:
         - None
     """
-    def __init__(self, copyrightYear: int, copyrightHolder: str):
+    def __init__(self, copyrightYear: int, copyrightHolder: str, url: str):
         """
         Creates a new Asl20 instance.
         :param copyrightYear: The copyright year.
         :type copyrightYear: int
         :param copyrightHolder: The copyright holder.
         :type copyrightHolder: str
+        :param url: The project url.
+        :type url: str
         """
         super().__init__(
-            f"""Apache License 2.0
+            f""" Apache License 2.0
 
-Copyright (C) {copyrightYear} {copyrightHolder}
+ Copyright (C) {copyrightYear} {copyrightHolder} {url}
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.""",
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+""",
         )
 
     @classmethod

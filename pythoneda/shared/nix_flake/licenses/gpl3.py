@@ -35,19 +35,21 @@ class Gpl3(License):
         - None
     """
 
-    def __init__(self, copyrightYear: int, copyrightHolder: str):
+    def __init__(self, copyrightYear: int, copyrightHolder: str, url: str):
         """
         Creates a new Gpl3 instance.
         :param copyrightYear: The copyright year.
         :type copyrightYear: int
         :param copyrightHolder: The copyright holder.
         :type copyrightHolder: str
+        :param url: The project url.
+        :type url: str
         """
         super().__init__(
             f""" GNU GENERAL PUBLIC LICENSE
  Version 3, 29 June 2007
 
- Copyright (C) {copyrightYear} {copyrightHolder}
+ Copyright (C) {copyrightYear} {copyrightHolder} {url}
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

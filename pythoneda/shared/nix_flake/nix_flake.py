@@ -84,20 +84,17 @@ class NixFlake(Entity):
         super().__init__()
         self._name = name
         self._version = version
-        self._inputs = inputs
+        self._inputs = list(set(inputs))
         self._output_folder = outputFolder
         self._template_subfolder = templateSubfolder
         self._description = description
         self._homepage = homepage
-        self._license = License.from_id(licenseId, copyrightYear, copyrightHolder)
+        self._license = License.from_id(licenseId, copyrightYear, copyrightHolder, homepage)
         self._maintainers = maintainers
         self._copyright_year = copyrightYear
         self._copyright_holder = copyrightHolder
-        for input in inputs:
+        for input in self._inputs:
             input.bind(self)
-        print(f'** received inputs **')
-        for input in inputs:
-            print(f'- {input.name}')
 
     @classmethod
     def empty(cls):
@@ -280,9 +277,7 @@ class NixFlake(Entity):
         :return: Such location.
         :rtype: str
         """
-#        return Path(self.parent_folder(self.parent_folder(self.parent_folder(self.parent_folder(__file__))))) / "templates"
-#        TODO: fix hardcoded path
-        return "/home/chous/github/pythoneda/pythoneda-shared-nix-flake/shared/templates"
+        return Path(self.parent_folder(self.parent_folder(self.parent_folder(self.parent_folder(__file__))))) / "templates"
 
     def generate_flake(self, flakeFolder:str):
         """
@@ -306,23 +301,16 @@ class NixFlake(Entity):
         :param outputFileName: The name of the generated file.
         :type outputFileName: str
         """
-        #
-        # PathGroupLoader
-#        StringTemplateGroup.registerGroupLoader(PathGroupLoader(templateFolder))
-#        print(f'trying to load group {groupName}')
-
         # Manually read the .stg file
         with open(Path(templateFolder) / f"{groupName}.stg", 'r', encoding='utf-8') as f:
-#            stg_content = f.read()
 
             # Create a group from the string content
             group = StringTemplateGroup(name=groupName, file=f, rootDir=templateFolder)
 
-#        group = StringTemplateGroup.loadGroup(groupName)
-
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
 
+        print(str(root_template))
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))
 
