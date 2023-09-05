@@ -27,8 +27,7 @@ inputs(deps) ::= <<
 input(dep) ::= <<
 <dep.name> = {
   url = "<dep.url>";
-  <other_follows(dep=dep)>
-};
+  <other_follows(dep=dep)>};
 >>
 
 other_follows(dep) ::= <<
@@ -79,8 +78,7 @@ root(flake) ::= <<
 {
   description = "<flake.description>";
   inputs = rec {
-<inputs(deps=flake.inputs)>
-  };
+<inputs(deps=flake.inputs)>  };
   outputs = inputs:
     with inputs;
     flake-utils.lib.eachDefaultSystem (system:
@@ -179,16 +177,13 @@ root(flake) ::= <<
           <flake.name>-default = <flake.name>-python310;
           <flake.name>-python38 = <flake.name>-for {
             python = pkgs.python38;
-            <package_inputs_as_parameters_for_python38(flake)>
-          };
+            <package_inputs_as_parameters_for_python38(flake)>          };
           <flake.name>-python39 = <flake.name>-for {
             python = pkgs.python39;
-            <package_inputs_as_parameters_for_python39(flake)>
-          };
+            <package_inputs_as_parameters_for_python39(flake)>          };
           <flake.name>-python310 = <flake.name>-for {
             python = pkgs.python310;
-            <package_inputs_as_parameters_for_python310(flake)>
-          };
+            <package_inputs_as_parameters_for_python310(flake)>          };
         };
       });
 }

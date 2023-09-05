@@ -84,7 +84,7 @@ class NixFlake(Entity):
         super().__init__()
         self._name = name
         self._version = version
-        self._inputs = list(set(inputs))
+        self._inputs = list({obj.name: obj for obj in inputs}.values())
         self._output_folder = outputFolder
         self._template_subfolder = templateSubfolder
         self._description = description
@@ -338,6 +338,7 @@ class NixFlake(Entity):
         GitInit(self.output_folder).init()
         self.git_add_files(GitAdd(self.output_folder))
 
+        self.__class__.logger().debug(f'Launching "nix run" on {self.output_folder}')
         try:
             process = await asyncio.create_subprocess_shell("nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.output_folder)
             stdout, stderr = await process.communicate()
@@ -348,3 +349,4 @@ class NixFlake(Entity):
                 print(stderr.decode())
         except subprocess.CalledProcessError as err:
             print(err.stderr)
+        self.__class__.logger().debug('"nix run" finished')

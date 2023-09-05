@@ -26,4 +26,5 @@ from .nix_flake import NixFlake
 from .nixos_2305_input import Nixos2305Input
 from .flake_utils_input import FlakeUtilsInput
 from .pythoneda_shared_pythoneda_banner_input import PythonedaSharedPythonedaBannerInput
+from .pythoneda_shared_pythoneda_domain_input import PythonedaSharedPythonedaDomainInput
 from .pythoneda_nix_flake import PythonedaNixFlake

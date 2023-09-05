@@ -47,7 +47,7 @@ class NixFlakeInput(ValueObject):
         super().__init__()
         self._name = name
         self._url = url
-        self._inputs = inputs
+        self._inputs = [ input for input in inputs if input.name != name ]
 
     @property
     @primary_key_attribute
@@ -95,8 +95,6 @@ class NixFlakeInput(ValueObject):
         :type flake: pythoneda.shared.nix_flake.NixFlake
         """
         self._follows = list(set(self.inputs) & set(flake.inputs))
-        print(f'** bind of {self.inputs} and {flake.inputs} -> {self._follows}')
-        print()
 
     @property
     def name_in_camel_case(self) -> str:

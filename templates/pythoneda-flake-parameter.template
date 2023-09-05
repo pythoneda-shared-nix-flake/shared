@@ -1,2 +1,0 @@
-            {dependency} =
-              {dependency}.packages.${{system}}.{dependency}-python{python_version};

@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from datetime import datetime
 from path import Path
 from pythoneda import attribute
-from pythoneda.shared.nix_flake import FlakeUtilsInput, NixFlake, NixFlakeInput, Nixos2305Input, PythonedaSharedPythonedaBannerInput
+from pythoneda.shared.nix_flake import FlakeUtilsInput, NixFlake, NixFlakeInput, Nixos2305Input, PythonedaSharedPythonedaBannerInput, PythonedaSharedPythonedaDomainInput
 from typing import List
 
 class PythonedaNixFlake(NixFlake):
@@ -60,10 +60,13 @@ class PythonedaNixFlake(NixFlake):
         :param hexagonalLayer: The type of hexagonal layer. See pythoneda.application.HexagonalLayer.
         :type hexagonalLayer: str
         """
+        aux_inputs = [Nixos2305Input(), FlakeUtilsInput(), PythonedaSharedPythonedaBannerInput()]
+        if name != 'pythoneda-shared-pythoneda-domain':
+            aux_inputs.append(PythonedaSharedPythonedaDomainInput())
         super().__init__(
             name,
             version,
-            list(set(inputs) | set([Nixos2305Input(), FlakeUtilsInput(), PythonedaSharedPythonedaBannerInput()])),
+            list(set(inputs) | set(aux_inputs)),
             outputFolder,
             "pythoneda",
             description,
