@@ -40,6 +40,6 @@ class PythonedaSharedPythonedaDomainInput(NixFlakeInput):
         """
         super().__init__(
             "pythoneda-shared-pythoneda-domain",
-            "github:pythoneda-shared-pythoneda/domain-artifact/0.0.1a38?dir=domain",
+            "github:pythoneda-shared-pythoneda/domain-artifact/0.0.1a40?dir=domain",
             [Nixos2305Input(), FlakeUtilsInput(), PythonedaSharedPythonedaBannerInput()]
         )
