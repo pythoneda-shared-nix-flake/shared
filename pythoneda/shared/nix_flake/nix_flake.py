@@ -18,6 +18,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .nix_flake_input import NixFlakeInput
+import abc
 import asyncio
 import os
 from path import Path
@@ -29,7 +31,7 @@ import subprocess
 import tempfile
 from typing import Dict, List
 
-class NixFlake(Entity):
+class NixFlake(Entity, abc.ABC):
 
     """
     Represents a Nix flake.
@@ -41,14 +43,14 @@ class NixFlake(Entity):
         - Knows how to run itself.
 
     Collaborators:
-        - None
+        - pythoneda.shared.nix_flake.NixFlakeInput
     """
     def __init__(
             self,
             name:str,
             version:str,
+            url:str,
             inputs:List,
-            outputFolder:str,
             templateSubfolder:str,
             description:str,
             homepage:str,
@@ -62,10 +64,10 @@ class NixFlake(Entity):
         :type name: str
         :param version: The version of the flake.
         :type version: str
+        :param url: The url of the Nix flake.
+        :type url: str
         :param inputs: The flake inputs.
         :type inputs: List[pythoneda.shared.nix_flake.NixFlakeInput]
-        :param outputFolder: The output folder.
-        :type outputFolder: str
         :param templateSubfolder: The template subfolder, if any.
         :type templateSubfolder: str
         :param description: The flake description.
@@ -84,8 +86,8 @@ class NixFlake(Entity):
         super().__init__()
         self._name = name
         self._version = version
+        self._url = url
         self._inputs = list({obj.name: obj for obj in inputs}.values())
-        self._output_folder = outputFolder
         self._template_subfolder = templateSubfolder
         self._description = description
         self._homepage = homepage
@@ -103,7 +105,7 @@ class NixFlake(Entity):
         :return: An empty instance.
         :rtype: pythoneda.ValueObject
         """
-        return cls(None, None, [], None, None, None, None, None, [], None, None)
+        return cls(None, None, None, [], None, None, None, None, [], None, None)
 
     @property
     @primary_key_attribute
@@ -126,6 +128,16 @@ class NixFlake(Entity):
         return self._version
 
     @property
+    @primary_key_attribute
+    def url(self) -> str:
+        """
+        Retrieves the url of the flake.
+        :return: Such url.
+        :rtype: str
+        """
+        return self._url
+
+    @property
     @attribute
     def inputs(self) -> List:
         """
@@ -134,16 +146,6 @@ class NixFlake(Entity):
         :rtype: List
         """
         return self._inputs
-
-    @property
-    @attribute
-    def output_folder(self) -> str:
-        """
-        Retrieves the output folder.
-        :return: Such folder.
-        :rtype: str
-        """
-        return self._output_folder
 
     @property
     @attribute
@@ -279,6 +281,15 @@ class NixFlake(Entity):
         """
         return Path(self.parent_folder(self.parent_folder(self.parent_folder(self.parent_folder(__file__))))) / "templates"
 
+    @abc.abstractmethod
+    def to_input(self) -> NixFlakeInput:
+        """
+        Converts this flake to an input for other flake.
+        :return: The input.
+        :rtype: pythoneda.shared.nix_flake.NixFlakeInput
+        """
+        pass
+
     def generate_flake(self, flakeFolder:str):
         """
         Generates the flake from a template.
@@ -310,7 +321,7 @@ class NixFlake(Entity):
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
 
-        print(str(root_template))
+        NixFlake.logger("pythoneda.shared.nix_flake.NixFlake").debug(str(root_template))
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))
 
@@ -334,19 +345,20 @@ class NixFlake(Entity):
         """
         Runs this flake.
         """
-        self.generate_files(self.output_folder)
-        GitInit(self.output_folder).init()
-        self.git_add_files(GitAdd(self.output_folder))
+        with tempfile.TemporaryFolder() as tmp_folder:
+            self.generate_files(tmp_folder)
+            GitInit(tmp_folder).init()
+            self.git_add_files(GitAdd(tmp_folder))
 
-        self.__class__.logger().debug(f'Launching "nix run" on {self.output_folder}')
-        try:
-            process = await asyncio.create_subprocess_shell("nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.output_folder)
-            stdout, stderr = await process.communicate()
+            self.__class__.logger().debug(f'Launching "nix run" on {self.tmp_folder}')
+            try:
+                process = await asyncio.create_subprocess_shell("nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp_folder)
+                stdout, stderr = await process.communicate()
 
-            if stdout:
-                print(stdout.decode())
-            if stderr:
-                print(stderr.decode())
-        except subprocess.CalledProcessError as err:
-            print(err.stderr)
-        self.__class__.logger().debug('"nix run" finished')
+                if stdout:
+                    print(stdout.decode())
+                if stderr:
+                    print(stderr.decode())
+            except subprocess.CalledProcessError as err:
+                print(err.stderr)
+        NixFlake.logger("pythoneda.shared.NixFlake").debug('"nix run" finished')
