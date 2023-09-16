@@ -55,14 +55,25 @@ class Gpl3(License):
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
-"""
-        )
+""",
+                         copyrightYear,
+                         copyrightHolder,
+                         url)
 
     @classmethod
-    def id(self) -> str:
+    def empty(cls):
         """
-        Retrieves the id of the license.
-        :return: Such id.
+        Retrieves an empty instance, required JSON deserialization.
+        :return: An empty License instance.
+        :rtype: pythoneda.shared.nix_flake.licenses.Gpl3
+        """
+        return cls(None, None, None)
+
+    @classmethod
+    def license_type(self) -> str:
+        """
+        Retrieves the type of the license.
+        :return: Such type.
         :rtype: str
         """
         return "gpl3"

@@ -59,13 +59,24 @@ class Mit(License):
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
 """,
-        )
+                         copyrightYear,
+                         copyrightHolder,
+                         url)
 
     @classmethod
-    def id(self) -> str:
+    def empty(cls):
         """
-        Retrieves the id of the license.
-        :return: Such id.
+        Retrieves an empty instance, required JSON deserialization.
+        :return: An empty License instance.
+        :rtype: pythoneda.shared.nix_flake.licenses.Mit
+        """
+        return cls(None, None, None)
+
+    @classmethod
+    def license_type(self) -> str:
+        """
+        Retrieves the type of the license.
+        :return: Such type.
         :rtype: str
         """
         return "mit"

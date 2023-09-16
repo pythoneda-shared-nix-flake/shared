@@ -1,0 +1,187 @@
+// templates/code_requests/FlakeNix.stg
+//
+// This file defines the template for code-requests Nix flakes.
+//
+// Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
+group FlakeNix;
+
+inputs(deps) ::= <<
+    <deps: { dep | <input(dep=dep)>
+}>
+>>
+
+input(dep) ::= <<
+<dep.name> = {
+  url = "<dep.url>";
+  <other_follows(dep=dep)>};
+>>
+
+other_follows(dep) ::= <<
+<dep.follows: { other | inputs.<other.name>.follows = "<other.name>";
+}>
+>>
+
+declaring_package_inputs_as_parameters(flake) ::= <<
+<flake.package_inputs: { dep | , <dep.name> } >
+>>
+
+package_inputs_version_pyproject_declaration(flake) ::= <<
+<flake.package_inputs: { dep | <dep.name_in_camel_case> = <dep.name>.version;
+}>
+>>
+
+package_inputs_as_build_inputs(flake) ::= <<
+<flake.package_inputs: { dep | <dep.name>
+}>
+>>
+
+package_inputs_as_parameters_for_python38(flake) ::= <<
+<flake.package_inputs: { dep |
+<dep.name> = <dep.name>.packages.${system}.<dep.name>-python38;
+}>
+>>
+
+package_inputs_as_parameters_for_python39(flake) ::= <<
+<flake.package_inputs: { dep |
+<dep.name> = <dep.name>.packages.${system}.<dep.name>-python39;
+}>
+>>
+
+package_inputs_as_parameters_for_python310(flake) ::= <<
+<flake.package_inputs: { dep |
+<dep.name> = <dep.name>.packages.${system}.<dep.name>-python310;
+}>
+>>
+
+//  root template
+//  - flake: The flake.
+root(flake) ::= <<
+# <flake.name>/flake.nix
+#
+# This file defines a nix flake for <flake.name>-<flake.version>.
+#
+<flake.license_text_with_hash>
+{
+  description = "<flake.description>";
+  inputs = rec {
+<inputs(deps=flake.inputs)>  };
+  outputs = inputs:
+    with inputs;
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pname = "<flake.name>";
+        version = "<flake.version>";
+        pkgs = import nixos { inherit system; };
+        entrypoint = "<flake.name>";
+        entrypoint-path = "${entrypoint}.sh";
+        description = "<flake.description>";
+        license = pkgs.lib.licenses.<flake.license_id>;
+        maintainers = [ <flake.maintainers: { maintainer | "<maintainer>" }> ];
+        nixosVersion = builtins.readFile "${nixos}/.version";
+        nixpkgsRelease = "nixos-${nixosVersion}";
+        shared = import "${pythoneda-shared-pythoneda-banner}/nix/shared.nix";
+        <flake.name>-for = { python <declaring_package_inputs_as_parameters(flake)> }:
+          let
+            pnameWithUnderscores =
+              builtins.replaceStrings [ "-" ] [ "_" ] pname;
+            pythonVersionParts = builtins.splitVersion python.version;
+            pythonMajorVersion = builtins.head pythonVersionParts;
+            pythonMajorMinorVersion =
+              "${pythonMajorVersion}.${builtins.elemAt pythonVersionParts 1}";
+            wheelName =
+              "${pnameWithUnderscores}-${version}-py${pythonMajorVersion}-none-any.whl";
+          in python.pkgs.buildPythonPackage rec {
+            inherit pname version;
+            projectDir = ./.;
+            package = "_unused";
+            pyprojectTemplateFile = ./pyprojecttoml.template;
+            pyprojectTemplate = pkgs.substituteAll {
+              authors = builtins.concatStringsSep ","
+                (map (item: ''"${item}"'') maintainers);
+              desc = description;
+              pythonMajorMinor = pythonMajorMinorVersion;
+              inherit package pname version;
+              <package_inputs_version_pyproject_declaration(flake)>
+              src = pyprojectTemplateFile;
+            };
+
+            format = "pyproject";
+
+            nativeBuildInputs = with python.pkgs; [ pip pkgs.jq poetry-core ];
+            propagatedBuildInputs = with python.pkgs; [
+              <package_inputs_as_build_inputs(flake)>
+            ];
+
+            unpackPhase = ''
+              cp -r ${projectDir} .
+              sourceRoot=$(ls | grep -v env-vars)
+              chmod +w $sourceRoot
+              cp ${pyprojectTemplate} $sourceRoot/pyproject.toml
+              mkdir $sourceRoot/${package}
+              touch $sourceRoot/${package}/__init__.py
+            '';
+
+            postInstall = ''
+              mkdir $out/bin
+              echo "Creating $out/bin/${entrypoint-path}"
+              echo '#!/usr/bin/env sh' \> $out/bin/${entrypoint-path}
+              echo "export PYTHONPATH=$PYTHONPATH" \>\> $out/bin/${entrypoint-path}
+              echo "Running code-request.ipynb" \>> $out/bin/${entrypoint-path}
+              echo "jupyter lab ./code-request.ipynb" \>\> $out/bin/${entrypoint-path}
+              chmod +x $out/bin/${entrypoint-path}
+              ls -lia $out/bin
+            '';
+
+            meta = with pkgs.lib; {
+              inherit description homepage license maintainers;
+            };
+          };
+      in rec {
+        apps = rec {
+          default = <flake.name>-default;
+          <flake.name>-default = <flake.name>-python310;
+          <flake.name>-python38 = shared.app-for {
+            package = self.packages.${system}.<flake.name>-python38;
+            inherit entrypoint;
+          };
+          <flake.name>-python39 = shared.app-for {
+            package = self.packages.${system}.<flake.name>-python39;
+            inherit entrypoint;
+          };
+          <flake.name>-python310 = shared.app-for {
+            package = self.packages.${system}.<flake.name>-python310;
+            inherit entrypoint;
+          };
+        };
+        defaultApp = apps.default;
+        defaultPackage = packages.default;
+        packages = rec {
+          default = <flake.name>-default;
+          <flake.name>-default = <flake.name>-python310;
+          <flake.name>-python38 = <flake.name>-for {
+            python = pkgs.python38;
+            <package_inputs_as_parameters_for_python38(flake)>          };
+          <flake.name>-python39 = <flake.name>-for {
+            python = pkgs.python39;
+            <package_inputs_as_parameters_for_python39(flake)>          };
+          <flake.name>-python310 = <flake.name>-for {
+            python = pkgs.python310;
+            <package_inputs_as_parameters_for_python310(flake)>          };
+        };
+      });
+}
+>>

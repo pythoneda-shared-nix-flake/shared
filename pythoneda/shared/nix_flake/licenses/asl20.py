@@ -52,13 +52,24 @@ class Asl20(License):
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
 """,
-        )
+                         copyrightYear,
+                         copyrightHolder,
+                         url)
 
     @classmethod
-    def id(self) -> str:
+    def empty(cls):
         """
-        Retrieves the id of the license.
-        :return: Such id.
+        Retrieves an empty instance, required JSON deserialization.
+        :return: An empty License instance.
+        :rtype: pythoneda.shared.nix_flake.licenses.Asl20
+        """
+        return cls(None, None, None)
+
+    @classmethod
+    def license_type(self) -> str:
+        """
+        Retrieves the type of the license.
+        :return: Such type.
         :rtype: str
         """
         return "asl20"

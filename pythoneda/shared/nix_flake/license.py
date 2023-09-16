@@ -35,14 +35,32 @@ class License(Entity, abc.ABC):
     Collaborators:
         - None
     """
-    def __init__(self, preamble:str):
+    def __init__(self, preamble:str, copyrightYear:int, copyrightHolder:str, url:str):
         """
         Creates a new license instance.
         :param preamble: The license preamble.
         :type preamble: str
+        :param copyrightYear: The copyright year.
+        :type copyrightYear: int
+        :param copyrightHolder: The copyright holder.
+        :type copyrightHolder: str
+        :param url: The project url.
+        :type url: str
         """
         super().__init__()
         self._preamble = preamble
+        self._copyright_year = copyrightYear
+        self._copyright_holder = copyrightHolder
+        self._url = url
+
+    @classmethod
+    def empty(cls):
+        """
+        Retrieves an empty instance, required JSON deserialization.
+        :return: An empty License instance.
+        :rtype: pythoneda.shared.nix_flake.License
+        """
+        return cls(None, None, None, None)
 
     @property
     @attribute
@@ -54,12 +72,42 @@ class License(Entity, abc.ABC):
         """
         return self._preamble
 
+    @property
+    @attribute
+    def copyright_year(self) -> str:
+        """
+        Retrieves the copyright year of the license.
+        :return: Such year.
+        :rtype: int
+        """
+        return self._copyright_year
+
+    @property
+    @attribute
+    def copyright_holder(self) -> str:
+        """
+        Retrieves the copyright holder of the license.
+        :return: Such name.
+        :rtype: str
+        """
+        return self._copyright_holder
+
+    @property
+    @attribute
+    def url(self) -> str:
+        """
+        Retrieves the url of the license.
+        :return: Such url.
+        :rtype: str
+        """
+        return self._url
+
     @classmethod
     @abc.abstractmethod
-    def id(self) -> str:
+    def license_type(self) -> str:
         """
-        Retrieves the id of the license.
-        :return: Such id.
+        Retrieves the type of the license.
+        :return: Such type.
         :rtype: str
         """
         pass
@@ -71,14 +119,14 @@ class License(Entity, abc.ABC):
         :return: Such id.
         :rtype: str
         """
-        return self.__class__.id()
+        return self.__class__.license_type()
 
     @classmethod
-    def from_id(cls, id:str, copyrightYear:int, copyrightHolder:str, url:str):
+    def from_id(cls, idValue:str, copyrightYear:int, copyrightHolder:str, url:str):
         """
         Retrieves the license for given id, customized for given copyright information.
-        :param id: The license id.
-        :type id: str
+        :param idValue: The license id.
+        :type idValue: str
         :param copyrightYear: The copyright year.
         :type copyrightYear: int
         :param copyrightHolder: The copyright holder.
@@ -90,7 +138,7 @@ class License(Entity, abc.ABC):
         """
         result = None
         for license_class in License.__subclasses__():
-            if license_class.id() == id:
+            if license_class.license_type() == idValue:
                 result = license_class(copyrightYear, copyrightHolder, url)
                 break
         return result

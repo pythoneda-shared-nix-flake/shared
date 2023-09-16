@@ -19,10 +19,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .nix_flake_input import NixFlakeInput
-import abc
 import asyncio
 import os
-from path import Path
+from pathlib import Path
 from pythoneda import attribute, primary_key_attribute, Entity
 from pythoneda.shared.git import GitAdd, GitInit
 from pythoneda.shared.nix_flake import License
@@ -31,7 +30,7 @@ import subprocess
 import tempfile
 from typing import Dict, List
 
-class NixFlake(Entity, abc.ABC):
+class NixFlake(Entity):
 
     """
     Represents a Nix flake.
@@ -87,7 +86,7 @@ class NixFlake(Entity, abc.ABC):
         self._name = name
         self._version = version
         self._url = url
-        self._inputs = list({obj.name: obj for obj in inputs}.values())
+        self._inputs = list({obj.name: obj.to_input() for obj in inputs}.values())
         self._template_subfolder = templateSubfolder
         self._description = description
         self._homepage = homepage
@@ -237,13 +236,23 @@ class NixFlake(Entity, abc.ABC):
 
     @property
     @attribute
-    def copyright_text(self) -> str:
+    def copyright_year(self) -> int:
         """
-        Retrieves the copyright text.
+        Retrieves the copyright year.
+        :return: Such information.
+        :rtype: int
+        """
+        return self._copyright_year
+
+    @property
+    @attribute
+    def copyright_holder(self) -> int:
+        """
+        Retrieves the copyright holder.
         :return: Such information.
         :rtype: str
         """
-        return self._copyright_text
+        return self._copyright_holder
 
     @property
     @attribute
@@ -254,6 +263,45 @@ class NixFlake(Entity, abc.ABC):
         :rtype: str
         """
         return self._homepage
+
+    def _set_attribute_from_json(self, varName, varValue):
+        """
+        Changes the value of an attribute of this instance.
+        :param varName: The name of the attribute.
+        :type varName: str
+        :param varValue: The value of the attribute.
+        :type varValue: int, bool, str, type
+        """
+        if varName == 'inputs':
+            self._inputs = [NixFlakeInput.from_dict(value) for value in varValue]
+            for input in self._inputs:
+                input.bind(self)
+        elif varName == 'license':
+            if varValue is not None:
+                self._license = License.from_dict(varValue)
+        else:
+            super()._set_attribute_from_json(varName, varValue)
+
+    def _get_attribute_to_json(self, varName) -> str:
+        """
+        Retrieves the value of an attribute of this instance, as Json.
+        :param varName: The name of the attribute.
+        :type varName: str
+        :return: The attribute value in json format.
+        :rtype: str
+        """
+        result = None
+        if varName == 'inputs':
+            result = [input.to_dict() for input in self._inputs]
+
+        elif varName == 'license':
+            if self._license is None:
+                result = None
+            else:
+                result = self._license.to_dict()
+        else:
+            result = super()._get_attribute_to_json(varName)
+        return result
 
     def generate_files(self, flakeFolder:str):
         """
@@ -281,14 +329,13 @@ class NixFlake(Entity, abc.ABC):
         """
         return Path(self.parent_folder(self.parent_folder(self.parent_folder(self.parent_folder(__file__))))) / "templates"
 
-    @abc.abstractmethod
     def to_input(self) -> NixFlakeInput:
         """
         Converts this flake to an input for other flake.
         :return: The input.
         :rtype: pythoneda.shared.nix_flake.NixFlakeInput
         """
-        pass
+        return NixFlakeInput(self.name, self.url, self.inputs)
 
     def generate_flake(self, flakeFolder:str):
         """
@@ -316,7 +363,7 @@ class NixFlake(Entity, abc.ABC):
         with open(Path(templateFolder) / f"{groupName}.stg", 'r', encoding='utf-8') as f:
 
             # Create a group from the string content
-            group = StringTemplateGroup(name=groupName, file=f, rootDir=templateFolder)
+            group = StringTemplateGroup(name=groupName, file=f, rootDir=str(templateFolder))
 
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
@@ -345,12 +392,12 @@ class NixFlake(Entity, abc.ABC):
         """
         Runs this flake.
         """
-        with tempfile.TemporaryFolder() as tmp_folder:
+        with tempfile.TemporaryDirectory() as tmp_folder:
             self.generate_files(tmp_folder)
             GitInit(tmp_folder).init()
             self.git_add_files(GitAdd(tmp_folder))
 
-            self.__class__.logger().debug(f'Launching "nix run" on {self.tmp_folder}')
+            self.__class__.logger().debug(f'Launching "nix run" on {tmp_folder}')
             try:
                 process = await asyncio.create_subprocess_shell("nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp_folder)
                 stdout, stderr = await process.communicate()
