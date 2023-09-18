@@ -368,7 +368,7 @@ class NixFlake(Entity):
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
 
-        NixFlake.logger("pythoneda.shared.nix_flake.NixFlake").debug(str(root_template))
+        NixFlake.logger().debug(str(root_template))
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))
 
@@ -397,7 +397,7 @@ class NixFlake(Entity):
             GitInit(tmp_folder).init()
             self.git_add_files(GitAdd(tmp_folder))
 
-            self.__class__.logger().debug(f'Launching "nix run" on {tmp_folder}')
+            NixFlake.logger().debug(f'Launching "nix run" on {tmp_folder}')
             try:
                 process = await asyncio.create_subprocess_shell("nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp_folder)
                 stdout, stderr = await process.communicate()
@@ -408,4 +408,4 @@ class NixFlake(Entity):
                     print(stderr.decode())
             except subprocess.CalledProcessError as err:
                 print(err.stderr)
-        NixFlake.logger("pythoneda.shared.NixFlake").debug('"nix run" finished')
+        NixFlake.logger().debug('"nix run" finished')
