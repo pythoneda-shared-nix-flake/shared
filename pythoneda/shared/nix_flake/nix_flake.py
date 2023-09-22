@@ -368,7 +368,6 @@ class NixFlake(Entity):
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
 
-        NixFlake.logger().debug(str(root_template))
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))
 

@@ -29,3 +29,4 @@ from .nix_flake_input import NixFlakeInput
 from .nix_flake_spec import NixFlakeSpec
 from .nix_flake import NixFlake
 from .nixos_nix_flake import NixosNixFlake
+from .nix_flake_spec_for_execution import NixFlakeSpecForExecution

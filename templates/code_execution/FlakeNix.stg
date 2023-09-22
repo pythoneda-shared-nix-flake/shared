@@ -1,6 +1,6 @@
-// templates/code_requests/FlakeNix.stg
+// templates/code_execution/FlakeNix.stg
 //
-// This file defines the template for code-requests Nix flakes.
+// This file defines the template for code-Nix flakes that execute code-requests.
 //
 // Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 //
@@ -143,12 +143,19 @@ root(flake) ::= <<
 
             postInstall = ''
               mkdir $out/bin
+              cp /build/$sourceRoot/code_request.py $out/lib/python${pythonMajorMinorVersion}/code_request.py
+              cat /build/$sourceRoot/code_request.py
               echo "Creating $out/bin/${entrypoint-path}"
               echo '#!/usr/bin/env sh' \> $out/bin/${entrypoint-path}
-              echo 'export _PYTHONEDA="${pythoneda-shared-pythoneda-domain}";'
-              echo 'export PYTHONPATH="$(python $_PYTHONEDA/dist/scripts/process_pythonpath.py sort)"';
-              echo 'echo "Running code-request.ipynb"' \>> $out/bin/${entrypoint-path}
-              echo "jupyter lab ./code-request.ipynb" \>\> $out/bin/${entrypoint-path}
+              echo 'cat $out/lib/python${pythonMajorMinorVersion}/code_request.py' \>\> $out/bin/${entrypoint-path}
+              echo 'export _PYTHONEDA="${pythoneda-shared-pythoneda-domain}";' \>\> $out/bin/${entrypoint-path}
+              echo 'echo BEFORE' \>\> $out/bin/${entrypoint-path}
+              echo 'echo $PYTHONPATH | sed "s : \n g" | grep pythoneda' \>\> $out/bin/${entrypoint-path}
+              echo 'export PYTHONPATH="$(python $_PYTHONEDA/dist/scripts/process_pythonpath.py sort)"'  \>\> $out/bin/${entrypoint-path}
+              echo 'echo AFTER' \>\> $out/bin/${entrypoint-path}
+              echo 'echo $PYTHONPATH | sed "s : \n g" | grep pythoneda' \>\> $out/bin/${entrypoint-path}
+              echo 'echo "Running code_request.py"' \>\> $out/bin/${entrypoint-path}
+              echo "${python}/bin/python $out/lib/python${pythonMajorMinorVersion}/code_request.py" \>\> $out/bin/${entrypoint-path}
               chmod +x $out/bin/${entrypoint-path}
               ls -lia $out/bin
             '';
