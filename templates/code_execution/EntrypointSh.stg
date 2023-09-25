@@ -1,0 +1,36 @@
+// templates/code_execution/EntrypointSh.stg
+//
+// This file defines the template for the entrypoints for executing requested code.
+//
+// Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+group EntrypointSh;
+
+// root template
+// -flake: The flake.
+root(flake) ::= <<
+#!/usr/bin/env sh
+<flake.license_text_with_hash>
+
+echo "Running code_request.py"
+export _PYTHONEDA_PYTHON="@PYTHON@/bin/python"
+export PYTHONPATH="@PYTHONPATH@"
+export PYTHONPATH="$(python @PYTHONEDA_SHARED_PYTHONEDA_DOMAIN@/dist/scripts/process_pythonpath.py sort)";
+export _PYTHONEDA_DEPS="$(echo $PYTHONPATH | sed 's : \n g' | wc -l)"
+export _PYTHONEDA_PYTHONEDA_DEPS="$(echo $PYTHONPATH | sed 's : \n g' | grep 'pythoneda' | wc -l)"
+echo $PYTHONPATH | sed 's : \n g' | grep pythoneda
+@PYTHONEDA_SHARED_PYTHONEDA_BANNER@/bin/banner.sh -o "pythoneda-artifact" -r "code-request-application" -t "@VERSION@" -s D -a B -l D -p @PYTHON_VERSION@ -D $_PYTHONEDA_DEPS -d $_PYTHONEDA_PYTHONEDA_DEPS -n @NIXPKGS_RELEASE@
+$_PYTHONEDA_PYTHON @CODE_REQUEST@
+>>

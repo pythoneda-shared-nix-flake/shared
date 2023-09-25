@@ -368,6 +368,9 @@ class NixFlake(Entity):
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
 
+        with open(Path("/tmp/debug") / outputFileName, "w") as output_file:
+            output_file.write(str(root_template))
+
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))
 
@@ -398,7 +401,12 @@ class NixFlake(Entity):
 
             NixFlake.logger().debug(f'Launching "nix run" on {tmp_folder}')
             try:
-                process = await asyncio.create_subprocess_shell("nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp_folder)
+                process = await asyncio.create_subprocess_shell(
+                    "nix run .",
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    cwd=tmp_folder,
+                    env={'PATH': os.environ['PATH']})
                 stdout, stderr = await process.communicate()
 
                 if stdout:

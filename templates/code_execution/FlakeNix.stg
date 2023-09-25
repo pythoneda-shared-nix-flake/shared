@@ -97,7 +97,7 @@ root(flake) ::= <<
         description = "<flake.description>";
         license = pkgs.lib.licenses.<flake.license_id>;
         maintainers = [ <flake.maintainers: { maintainer | "<maintainer>" }> ];
-        nixosVersion = builtins.readFile "${nixos}/.version";
+        nixosVersion = builtins.replaceStrings ["\n"] [""] (builtins.readFile "${nixos}/.version");
         nixpkgsRelease = "nixos-${nixosVersion}";
         shared = import "${pythoneda-shared-pythoneda-banner}/nix/shared.nix";
         <flake.name>-for = { python <declaring_package_inputs_as_parameters(flake)> }:
@@ -139,25 +139,26 @@ root(flake) ::= <<
               cp ${pyprojectTemplate} $sourceRoot/pyproject.toml
               mkdir $sourceRoot/${package}
               touch $sourceRoot/${package}/__init__.py
+              ls -lrthlia $sourceRoot/
+            '';
+
+            postPatch = ''
+              substituteInPlace /build/$sourceRoot/${entrypoint-path} \
+                --replace "@PYTHON@" "${python}" \
+                --replace "@PYTHONPATH@" "$PYTHONPATH" \
+                --replace "@CODE_REQUEST@" "$out/lib/python${pythonMajorMinorVersion}/code_request.py" \
+                --replace "@PYTHONEDA_SHARED_PYTHONEDA_DOMAIN@" "${pythoneda-shared-pythoneda-domain}" \
+                --replace "@PYTHONEDA_SHARED_PYTHONEDA_BANNER@" "${pythoneda-shared-pythoneda-banner}" \
+                --replace "@VERSION@" "${version}" \
+                --replace "@PYTHON_VERSION@" "${python.version}" \
+                --replace "@NIXPKGS_RELEASE@" "${nixosVersion}"
             '';
 
             postInstall = ''
               mkdir $out/bin
-              cp /build/$sourceRoot/code_request.py $out/lib/python${pythonMajorMinorVersion}/code_request.py
-              cat /build/$sourceRoot/code_request.py
-              echo "Creating $out/bin/${entrypoint-path}"
-              echo '#!/usr/bin/env sh' \> $out/bin/${entrypoint-path}
-              echo 'cat $out/lib/python${pythonMajorMinorVersion}/code_request.py' \>\> $out/bin/${entrypoint-path}
-              echo 'export _PYTHONEDA="${pythoneda-shared-pythoneda-domain}";' \>\> $out/bin/${entrypoint-path}
-              echo 'echo BEFORE' \>\> $out/bin/${entrypoint-path}
-              echo 'echo $PYTHONPATH | sed "s : \n g" | grep pythoneda' \>\> $out/bin/${entrypoint-path}
-              echo 'export PYTHONPATH="$(python $_PYTHONEDA/dist/scripts/process_pythonpath.py sort)"'  \>\> $out/bin/${entrypoint-path}
-              echo 'echo AFTER' \>\> $out/bin/${entrypoint-path}
-              echo 'echo $PYTHONPATH | sed "s : \n g" | grep pythoneda' \>\> $out/bin/${entrypoint-path}
-              echo 'echo "Running code_request.py"' \>\> $out/bin/${entrypoint-path}
-              echo "${python}/bin/python $out/lib/python${pythonMajorMinorVersion}/code_request.py" \>\> $out/bin/${entrypoint-path}
+              cp /build/$sourceRoot/${entrypoint-path} $out/bin/
               chmod +x $out/bin/${entrypoint-path}
-              ls -lia $out/bin
+              cp /build/$sourceRoot/code_request.py $out/lib/python${pythonMajorMinorVersion}/code_request.py
             '';
 
             meta = with pkgs.lib; {
