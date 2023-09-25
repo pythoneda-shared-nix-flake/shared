@@ -406,13 +406,31 @@ class NixFlake(Entity):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     cwd=tmp_folder,
+                    bufsize=0,
+                    universal_newlines=False,
                     env={'PATH': os.environ['PATH']})
-                stdout, stderr = await process.communicate()
 
-                if stdout:
-                    print(stdout.decode())
-                if stderr:
-                    print(stderr.decode())
+                async def read_stream(stream, callback):
+                    while True:
+                        line = await stream.readline()
+                        if line:
+                            callback(line)
+                        else:
+                            break
+
+                def print_stdout(line:str):
+                    print(line.decode().rstrip())
+
+                def print_stderr(line:str):
+                    NixFlake.logger().info(line.decode().rstrip())
+
+                await asyncio.gather(
+                    read_stream(process.stdout, print_stdout),
+                    read_stream(process.stderr, print_stderr))
+
+                await process.wait()
+
             except subprocess.CalledProcessError as err:
-                print(err.stderr)
+                NixFlake.logger().error(err.stderr)
+
         NixFlake.logger().debug('"nix run" finished')
