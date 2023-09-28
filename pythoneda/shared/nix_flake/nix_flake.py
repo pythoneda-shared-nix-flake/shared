@@ -390,10 +390,13 @@ class NixFlake(Entity):
         """
         gitAdd.add("flake.nix")
 
-    async def run(self):
+    async def run(self) -> str:
         """
-        Runs this flake.
+        Runs this flake, and returns the path to the derivation.
+        :return: Such path.
+        :rtype: str
         """
+        result = None
         with tempfile.TemporaryDirectory() as tmp_folder:
             self.generate_files(tmp_folder)
             GitInit(tmp_folder).init()
@@ -430,7 +433,33 @@ class NixFlake(Entity):
 
                 await process.wait()
 
+                result = await self.eval(tmp_folder)
+
             except subprocess.CalledProcessError as err:
                 NixFlake.logger().error(err.stderr)
 
-        NixFlake.logger().debug('"nix run" finished')
+        NixFlake.logger().debug(f'"nix run" finished: {result}')
+
+        return result
+
+    async def eval(self, path:str) -> str:
+        """
+        Runs "nix eval ." in given folder,
+        :return: The path of the derivation.
+        :rtype: str
+        """
+        result = None
+        try:
+            execution = subprocess.run(
+                ["nix", "eval", "."],
+                check=True,
+                capture_output=True,
+                text=True,
+                cwd=path,
+            )
+            result = execution.stdout
+        except subprocess.CalledProcessError as err:
+            NixFlake.logger().error(err)
+            NixFlake.logger().error(err.stderr)
+
+        return result

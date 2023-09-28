@@ -27,10 +27,10 @@ root(flake) ::= <<
 echo "Running code_request.py"
 export _PYTHONEDA_PYTHON="@PYTHON@/bin/python"
 export PYTHONPATH="@PYTHONPATH@"
-export PYTHONPATH="$(python @PYTHONEDA_SHARED_PYTHONEDA_DOMAIN@/dist/scripts/process_pythonpath.py sort)";
+export PYTHONPATH="$($_PYTHONEDA_PYTHON @PYTHONEDA_SHARED_PYTHONEDA_DOMAIN@/dist/scripts/process_pythonpath.py sort)";
 export _PYTHONEDA_DEPS="$(echo $PYTHONPATH | sed 's : \n g' | wc -l)"
 export _PYTHONEDA_PYTHONEDA_DEPS="$(echo $PYTHONPATH | sed 's : \n g' | grep 'pythoneda' | wc -l)"
 echo $PYTHONPATH | sed 's : \n g' | grep pythoneda
-@PYTHONEDA_SHARED_PYTHONEDA_BANNER@/bin/banner.sh -o "pythoneda-artifact" -r "code-request-application" -t "@VERSION@" -s D -a B -l D -p @PYTHON_VERSION@ -D $_PYTHONEDA_DEPS -d $_PYTHONEDA_PYTHONEDA_DEPS -n @NIXPKGS_RELEASE@
+@PYTHONEDA_SHARED_PYTHONEDA_BANNER@/bin/banner.sh -o "pythoneda-artifact" -r "code-request-application" -t "@VERSION@" -s "D" -a "B" -l "D" -p "@PYTHON_VERSION@" -D "$_PYTHONEDA_DEPS" -d "$_PYTHONEDA_PYTHONEDA_DEPS" -n "@NIXPKGS_RELEASE@"
 $_PYTHONEDA_PYTHON @CODE_REQUEST@
 >>
