@@ -18,8 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .flake_utils_nix_flake import FlakeUtilsNixFlake
 from .nix_flake import NixFlake
+from .nixos_nix_flake import NixosNixFlake
 from typing import List
+
 
 class PythonedaSharedPythonedaBannerNixFlake(NixFlake):
 
@@ -36,23 +39,41 @@ class PythonedaSharedPythonedaBannerNixFlake(NixFlake):
         - pythoneda.shared.nix_flake.NixFlake
     """
 
-    def __init__(self, version:str, inputs:List):
+    def __init__(self, version: str):
         """
         Creates a new PythonedaSharedPythonedaBannerNixFlake instance.
         :param version: The version.
         :type version: str
-        :param inputs: The inputs.
-        :type inputs: List[pythoneda.shared.nix_flake.NixFlake]
         """
         super().__init__(
             "pythoneda-shared-pythoneda-banner",
             version,
-            f"github:pythoneda-shared-pythoneda/banner/{version}",
-            inputs,
+            self.url_for,
+            [FlakeUtilsNixFlake.default(), NixosNixFlake.default()],
             "pythoneda",
             "Banner for PythonEDA projects",
             "https://github.com/pythoneda-shared-pythoneda/banner",
             "gpl3",
-            [ "rydnr <github@acm-sl.org>" ],
+            ["rydnr <github@acm-sl.org>"],
             2023,
-            "rydnr")
+            "rydnr",
+        )
+
+    def url_for(self, version: str) -> str:
+        """
+        Retrieves the url for given version.
+        :param version: The version.
+        :type version: str
+        :return: The url.
+        :rtype: str
+        """
+        return f"github:pythoneda-shared-pythoneda/banner/{version}"
+
+    @classmethod
+    def default(cls):
+        """
+        Retrieves the default version of the pythoneda-shared-pythoneda/banner Nix flake input.
+        :return: Such instance.
+        :rtype: pythoneda.shared.nix_flake.PythonedaSharedPythonedaBannerNixFlake
+        """
+        return cls("0.0.13")

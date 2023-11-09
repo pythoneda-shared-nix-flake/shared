@@ -28,7 +28,8 @@ from pythoneda.shared.nix_flake import License
 from stringtemplate3 import PathGroupLoader, StringTemplateGroup
 import subprocess
 import tempfile
-from typing import Dict, List
+from typing import Callable, Dict, List
+
 
 class NixFlake(Entity):
 
@@ -44,27 +45,29 @@ class NixFlake(Entity):
     Collaborators:
         - pythoneda.shared.nix_flake.NixFlakeInput
     """
+
     def __init__(
-            self,
-            name:str,
-            version:str,
-            url:str,
-            inputs:List,
-            templateSubfolder:str,
-            description:str,
-            homepage:str,
-            licenseId:str,
-            maintainers:List,
-            copyrightYear:int,
-            copyrightHolder:str):
+        self,
+        name: str,
+        version: str,
+        urlFor: Callable[[str], str],
+        inputs: List,
+        templateSubfolder: str,
+        description: str,
+        homepage: str,
+        licenseId: str,
+        maintainers: List,
+        copyrightYear: int,
+        copyrightHolder: str,
+    ):
         """
         Creates a new NixFlake instance.
         :param name: The name of the flake.
         :type name: str
         :param version: The version of the flake.
         :type version: str
-        :param url: The url of the Nix flake.
-        :type url: str
+        :param urlFor: The function to obtain the url from a given version.
+        :type urlFor: Callable[[str],str]
         :param inputs: The flake inputs.
         :type inputs: List[pythoneda.shared.nix_flake.NixFlakeInput]
         :param templateSubfolder: The template subfolder, if any.
@@ -85,12 +88,14 @@ class NixFlake(Entity):
         super().__init__()
         self._name = name
         self._version = version
-        self._url = url
+        self._url_for = urlFor
         self._inputs = list({obj.name: obj.to_input() for obj in inputs}.values())
         self._template_subfolder = templateSubfolder
         self._description = description
         self._homepage = homepage
-        self._license = License.from_id(licenseId, copyrightYear, copyrightHolder, homepage)
+        self._license = License.from_id(
+            licenseId, copyrightYear, copyrightHolder, homepage
+        )
         self._maintainers = maintainers
         self._copyright_year = copyrightYear
         self._copyright_holder = copyrightHolder
@@ -128,13 +133,13 @@ class NixFlake(Entity):
 
     @property
     @primary_key_attribute
-    def url(self) -> str:
+    def url_for(self) -> Callable[[str], str]:
         """
-        Retrieves the url of the flake.
-        :return: Such url.
-        :rtype: str
+        Retrieves the function to obtain the url of the flake from a given version.
+        :return: Such function.
+        :rtype: Callable[[str],str]
         """
-        return self._url
+        return self._url_for
 
     @property
     @attribute
@@ -203,7 +208,7 @@ class NixFlake(Entity):
         """
         return self.with_prefix(self.license_text, "//")
 
-    def with_prefix(self, text:str, prefix:str) -> str:
+    def with_prefix(self, text: str, prefix: str) -> str:
         """
         Retrieves given text with given prefix.
         :param text: The text to process.
@@ -213,7 +218,7 @@ class NixFlake(Entity):
         :return: Such information.
         :rtype: str
         """
-        return '\n'.join([f'{prefix}{line}' for line in text.split('\n')])
+        return "\n".join([f"{prefix}{line}" for line in text.split("\n")])
 
     @property
     def license_id(self) -> str:
@@ -272,11 +277,11 @@ class NixFlake(Entity):
         :param varValue: The value of the attribute.
         :type varValue: int, bool, str, type
         """
-        if varName == 'inputs':
+        if varName == "inputs":
             self._inputs = [NixFlakeInput.from_dict(value) for value in varValue]
             for input in self._inputs:
                 input.bind(self)
-        elif varName == 'license':
+        elif varName == "license":
             if varValue is not None:
                 self._license = License.from_dict(varValue)
         else:
@@ -291,10 +296,10 @@ class NixFlake(Entity):
         :rtype: str
         """
         result = None
-        if varName == 'inputs':
+        if varName == "inputs":
             result = [input.to_dict() for input in self._inputs]
 
-        elif varName == 'license':
+        elif varName == "license":
             if self._license is None:
                 result = None
             else:
@@ -303,7 +308,7 @@ class NixFlake(Entity):
             result = super()._get_attribute_to_json(varName)
         return result
 
-    def generate_files(self, flakeFolder:str):
+    def generate_files(self, flakeFolder: str):
         """
         Generates the files.
         :param flakeFolder: The flake folder.
@@ -311,7 +316,7 @@ class NixFlake(Entity):
         """
         self.generate_flake(flakeFolder)
 
-    def parent_folder(self, path:str) -> str:
+    def parent_folder(self, path: str) -> str:
         """
         Retrieves the parent folder of given path.
         :param path: The path.
@@ -327,7 +332,14 @@ class NixFlake(Entity):
         :return: Such location.
         :rtype: str
         """
-        return Path(self.parent_folder(self.parent_folder(self.parent_folder(self.parent_folder(__file__))))) / "templates"
+        return (
+            Path(
+                self.parent_folder(
+                    self.parent_folder(self.parent_folder(self.parent_folder(__file__)))
+                )
+            )
+            / "templates"
+        )
 
     def to_input(self) -> NixFlakeInput:
         """
@@ -335,17 +347,30 @@ class NixFlake(Entity):
         :return: The input.
         :rtype: pythoneda.shared.nix_flake.NixFlakeInput
         """
-        return NixFlakeInput(self.name, self.url, self.inputs)
+        return NixFlakeInput(self.name, self.version, self.url_for, self.inputs)
 
-    def generate_flake(self, flakeFolder:str):
+    def generate_flake(self, flakeFolder: str):
         """
         Generates the flake from a template.
         :param flakeFolder: The flake folder.
         :type flakeFolder: str
         """
-        self.process_template(flakeFolder, "FlakeNix", Path(self.templates_folder()) / self.template_subfolder, "root", "flake.nix")
+        self.process_template(
+            flakeFolder,
+            "FlakeNix",
+            Path(self.templates_folder()) / self.template_subfolder,
+            "root",
+            "flake.nix",
+        )
 
-    def process_template(self, outputFolder:str, groupName:str, templateFolder:str, rootTemplate:str, outputFileName:str):
+    def process_template(
+        self,
+        outputFolder: str,
+        groupName: str,
+        templateFolder: str,
+        rootTemplate: str,
+        outputFileName: str,
+    ):
         """
         Processes a template.
         :param outputFolder: The output folder.
@@ -360,10 +385,13 @@ class NixFlake(Entity):
         :type outputFileName: str
         """
         # Manually read the .stg file
-        with open(Path(templateFolder) / f"{groupName}.stg", 'r', encoding='utf-8') as f:
-
+        with open(
+            Path(templateFolder) / f"{groupName}.stg", "r", encoding="utf-8"
+        ) as f:
             # Create a group from the string content
-            group = StringTemplateGroup(name=groupName, file=f, rootDir=str(templateFolder))
+            group = StringTemplateGroup(
+                name=groupName, file=f, rootDir=str(templateFolder)
+            )
 
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
@@ -411,7 +439,8 @@ class NixFlake(Entity):
                     cwd=tmp_folder,
                     bufsize=0,
                     universal_newlines=False,
-                    env={'PATH': os.environ['PATH']})
+                    env={"PATH": os.environ["PATH"]},
+                )
 
                 async def read_stream(stream, callback):
                     while True:
@@ -421,15 +450,16 @@ class NixFlake(Entity):
                         else:
                             break
 
-                def print_stdout(line:str):
+                def print_stdout(line: str):
                     print(line.decode().rstrip())
 
-                def print_stderr(line:str):
+                def print_stderr(line: str):
                     NixFlake.logger().info(line.decode().rstrip())
 
                 await asyncio.gather(
                     read_stream(process.stdout, print_stdout),
-                    read_stream(process.stderr, print_stderr))
+                    read_stream(process.stderr, print_stderr),
+                )
 
                 await process.wait()
 
@@ -442,7 +472,7 @@ class NixFlake(Entity):
 
         return result
 
-    async def eval(self, path:str) -> str:
+    async def eval(self, path: str) -> str:
         """
         Runs "nix eval ." in given folder,
         :return: The path of the derivation.
@@ -463,3 +493,34 @@ class NixFlake(Entity):
             NixFlake.logger().error(err.stderr)
 
         return result
+
+    @classmethod
+    async def update_flake_lock(
+        self, repositoryFolder: str, flakeSubfolder: str = None
+    ):
+        """
+        Updates the flake.lock file.
+        :param repositoryFolder: The repository folder.
+        :type repositoryFolder: str
+        :param flakeSubfolder: The subfolder of the flake.nix file.
+        :type flakeSubfolder: str
+        """
+        subfolder = "."
+        if flakeSubfolder is not None:
+            subfolder = f"{flakeSubfolder}/"
+
+        try:
+            subprocess.run(
+                ["nix", "flake", "update", subfolder],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=False,
+                cwd=repositoryFolder,
+            )
+        except subprocess.CalledProcessError as err:
+            NixFlake.logger().error(err.stdout)
+            NixFlake.logger().error(err.stderr)
+            raise FlakeLockUpdateFailed(repositoryFolder, flakeSubfolder)
+
+        return True

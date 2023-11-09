@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .nix_flake import NixFlake
 
+
 class NixosNixFlake(NixFlake):
 
     """
@@ -34,7 +35,7 @@ class NixosNixFlake(NixFlake):
         - pythoneda.shared.nix_flake.NixFlake
     """
 
-    def __init__(self, version:str):
+    def __init__(self, version: str):
         """
         Creates a new NixosNixFlake instance.
         :param version: The version.
@@ -43,7 +44,7 @@ class NixosNixFlake(NixFlake):
         super().__init__(
             "nixos",
             version,
-            f"github:NixOS/nixpkgs/nixos-{version}",
+            self.url_for,
             [],
             None,
             "A collection of packages for the Nix package manager",
@@ -51,5 +52,24 @@ class NixosNixFlake(NixFlake):
             "mit",
             list("5000+ contributors"),
             2008,
-            "https://nixos.org"
-            )
+            "https://nixos.org",
+        )
+
+    @classmethod
+    def default(cls):
+        """
+        Retrieves the default version of the NixOS/nixpkgs Nix flake input.
+        :return: Such instance.
+        :rtype: pythoneda.shared.nix_flake.NixosNixFlake
+        """
+        return cls("nixos-23.05")
+
+    def url_for(self, version: str) -> str:
+        """
+        Retrieves the url for given version.
+        :param version: The version.
+        :type version: str
+        :return: The url.
+        :rtype: str
+        """
+        return f"github:NixOS/nixpkgs/{version}"

@@ -22,8 +22,13 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from .license import License
 from .pythoneda_nix_flake import PythonedaNixFlake
-from .pythoneda_shared_pythoneda_banner_nix_flake import PythonedaSharedPythonedaBannerNixFlake
-from .pythoneda_shared_pythoneda_domain_nix_flake import PythonedaSharedPythonedaDomainNixFlake
+from .pythoneda_shared_pythoneda_banner_nix_flake import (
+    PythonedaSharedPythonedaBannerNixFlake,
+)
+from .pythoneda_shared_pythoneda_domain_nix_flake import (
+    PythonedaSharedPythonedaDomainNixFlake,
+)
+from .flake_lock_update_failed import FlakeLockUpdateFailed
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
 from .nix_flake_input import NixFlakeInput
 from .nix_flake_spec import NixFlakeSpec

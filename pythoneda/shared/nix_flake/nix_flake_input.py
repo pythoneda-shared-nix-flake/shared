@@ -19,7 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import attribute, primary_key_attribute, ValueObject
-from typing import List
+from typing import Callable, List
+
 
 class NixFlakeInput(ValueObject):
     """
@@ -34,20 +35,25 @@ class NixFlakeInput(ValueObject):
         - pythoneda.ValueObject
     """
 
-    def __init__(self, name:str, url:str, inputs:List=[]):
+    def __init__(
+        self, name: str, version: str, urlFor: Callable[[str], str], inputs: List = []
+    ):
         """
         Creates a new NixFlakeInput instance.
         :param name: The name of the input.
         :type name: str
-        :param url: The url of the dependency.
-        :type url: str
+        :param version: The version of the input.
+        :type version: str
+        :param url_for: The function to retrieve the url for a given version.
+        :type url_for: Callable[[str], str]
         :param inputs: Its own inputs.
         :type inputs: Dict
         """
         super().__init__()
         self._name = name
-        self._url = url
-        self._inputs = [ input for input in inputs if input.name != name ]
+        self._version = version
+        self._inputs = [input for input in inputs if input.name != name]
+        self._url_for = urlFor
         self._follows = []
 
     @classmethod
@@ -71,13 +77,23 @@ class NixFlakeInput(ValueObject):
 
     @property
     @attribute
-    def url(self) -> str:
+    def version(self) -> str:
         """
-        Retrieves the url of the dependency.
-        :return: The url.
+        Retrieves the version of the dependency.
+        :return: The version.
         :rtype: str
         """
-        return self._url
+        return self._version
+
+    @property
+    @attribute
+    def url_for(self) -> Callable[[str], str]:
+        """
+        Retrieves a function to obtain the url for a given version.
+        :return: Such function.
+        :rtype: Callable[[str], str]
+        """
+        return self._url_for
 
     @property
     @attribute
@@ -114,7 +130,7 @@ class NixFlakeInput(ValueObject):
         :param varValue: The value of the attribute.
         :type varValue: int, bool, str, type
         """
-        if varName == 'inputs':
+        if varName == "inputs":
             self._inputs = [NixFlakeInput.from_dict(value) for value in varValue]
         else:
             super()._set_attribute_from_json(varName, varValue)
@@ -128,7 +144,7 @@ class NixFlakeInput(ValueObject):
         :rtype: str
         """
         result = None
-        if varName == 'inputs':
+        if varName == "inputs":
             result = [input.to_dict() for input in self._inputs]
         else:
             result = super()._get_attribute_to_json(varName)
@@ -141,16 +157,14 @@ class NixFlakeInput(ValueObject):
         :return: The name formatted in camel case.
         :rtype: str
         """
-        return self.to_camel_case(self.name)
+        return self.__class__.kebab_to_camel(self.name)
 
-    def to_camel_case(self, txt:str) -> str:
+    def for_version(self, version: str):
         """
-        Retrieves given value in camel case.
-        :param txt: The value.
-        :type txt: str
-        :return: The value formatted in camel case.
-        :rtype: str
+        Retrieves a clone of this dependency, with the updated version.
+        :param version: The version.
+        :type version: str
+        :return: A copy of this dependency, updated.
+        :rtype: pythoneda.shared.nix_flake.NixFlakeInput
         """
-        words = txt.split("-")
-        result = ''.join(word.capitalize() for word in words)
-        return result[0].lower() + result[1:]
+        return self.__class__(self.name, version, self.url_for, self.inputs)

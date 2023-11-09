@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from .pythoneda_nix_flake import PythonedaNixFlake
 from typing import List
 
+
 class PythonedaSharedPythonedaDomainNixFlake(PythonedaNixFlake):
 
     """
@@ -36,7 +37,7 @@ class PythonedaSharedPythonedaDomainNixFlake(PythonedaNixFlake):
         - pythoneda.shared.nix_flake.NixFlake
     """
 
-    def __init__(self, version:str, inputs:List):
+    def __init__(self, version: str, inputs: List):
         """
         Creates a new PythonedaSharedPythonedaDomainNixFlake instance.
         :param version: The version.
@@ -47,11 +48,21 @@ class PythonedaSharedPythonedaDomainNixFlake(PythonedaNixFlake):
         super().__init__(
             "pythoneda-shared-pythoneda-domain",
             version,
-            f"github:pythoneda-shared-pythoneda/domain-artifact/{version}?dir=domain",
+            self.url_for,
             inputs,
             "Support for event-driven architectures in Python",
             "https://github.com/pythoneda-shared-pythoneda/domain",
             "S",
             "D",
-            "D"
+            "D",
         )
+
+    def url_for(self, version: str) -> str:
+        """
+        Retrieves the url for given version.
+        :param version: The version.
+        :type version: str
+        :return: The url.
+        :rtype: str
+        """
+        return f"github:pythoneda-shared-pythoneda/domain-artifact/{version}?dir=domain"

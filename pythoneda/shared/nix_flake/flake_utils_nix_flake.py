@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .nix_flake import NixFlake
 
+
 class FlakeUtilsNixFlake(NixFlake):
 
     """
@@ -35,7 +36,7 @@ class FlakeUtilsNixFlake(NixFlake):
         - pythoneda.shared.nix_flake.NixFlake
     """
 
-    def __init__(self, version:str):
+    def __init__(self, version: str):
         """
         Creates a new FlakeUtilsNixFlake instance.
         :param version: The version.
@@ -44,7 +45,7 @@ class FlakeUtilsNixFlake(NixFlake):
         super().__init__(
             "flake-utils",
             version,
-            f"github:numtide/flake-utils/{version}",
+            self.url_for,
             [],
             None,
             "Pure Nix flake utility functions",
@@ -52,5 +53,24 @@ class FlakeUtilsNixFlake(NixFlake):
             "mit",
             list("https://github.com/zimbatm"),
             2022,
-            "https://github.com/numtide"
-            )
+            "https://github.com/numtide",
+        )
+
+    @classmethod
+    def default(cls):
+        """
+        Retrieves the default version of the flake-utils Nix flake input.
+        :return: Such instance.
+        :rtype: pythoneda.shared.nix_flake.FlakeUtilsNixFlake
+        """
+        return cls("v1.0.0")
+
+    def url_for(self, version: str) -> str:
+        """
+        Retrieves the url for given version.
+        :param version: The version.
+        :type version: str
+        :return: The url.
+        :rtype: str
+        """
+        return f"github:numtide/flake-utils/{version}"
