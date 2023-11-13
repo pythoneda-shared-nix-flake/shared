@@ -30,6 +30,7 @@ from .pythoneda_shared_pythoneda_domain_nix_flake import (
 )
 from .flake_lock_update_failed import FlakeLockUpdateFailed
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
+from .nix_flake_metadata import NixFlakeMetadata
 from .nix_flake_input import NixFlakeInput
 from .nix_flake_spec import NixFlakeSpec
 from .nix_flake import NixFlake

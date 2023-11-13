@@ -25,6 +25,7 @@ from path import Path
 from pythoneda import attribute
 from typing import List
 
+
 class PythonedaNixFlake(NixFlake):
 
     """
@@ -39,17 +40,19 @@ class PythonedaNixFlake(NixFlake):
     Collaborators:
         - pythoneda.shared.nix_flake.NixFlake
     """
+
     def __init__(
-            self,
-            name:str,
-            version:str,
-            url:str,
-            inputs:List,
-            description:str,
-            homepage:str,
-            archRole:str,
-            pescioSpace:str,
-            hexagonalLayer:str):
+        self,
+        name: str,
+        version: str,
+        url: str,
+        inputs: List,
+        description: str,
+        homepage: str,
+        archRole: str,
+        pescioSpace: str,
+        hexagonalLayer: str,
+    ):
         """
         Creates a new NixFlake instance.
         :param name: The name of the flake.
@@ -80,9 +83,10 @@ class PythonedaNixFlake(NixFlake):
             description,
             homepage,
             "gpl3",
-            [ "rydnr <github@acm-sl.org>" ],
+            ["rydnr <github@acm-sl.org>"],
             2023,
-            "rydnr")
+            "rydnr",
+        )
         self._arch_role = archRole
         self._pescio_space = pescioSpace
         self._hexagonal_layer = hexagonalLayer
@@ -104,7 +108,11 @@ class PythonedaNixFlake(NixFlake):
         :return: Such collection.
         :rtype: List
         """
-        return [input for input in self._inputs if not input.name in [ "nixos", "flake-utils" ] ]
+        return [
+            input
+            for input in self._inputs
+            if not input.name in ["nixos", "flake-utils"]
+        ]
 
     @property
     @attribute
@@ -145,13 +153,19 @@ class PythonedaNixFlake(NixFlake):
         self.generate_flake(flakeFolder)
         self.generate_pyprojecttoml_template(flakeFolder)
 
-    def generate_pyprojecttoml_template(self, flakeFolder:str):
+    def generate_pyprojecttoml_template(self, flakeFolder: str):
         """
         Generates the pyprojecttoml.template from a template. Yes, a template generates another template.
         :param flakeFolder: The flake folder.
         :type flakeFolder: str
         """
-        self.process_template(flakeFolder, "PyprojecttomlTemplate", Path(self.templates_folder()) / self.template_subfolder, "root", "pyprojecttoml.template")
+        self.process_template(
+            flakeFolder,
+            "PyprojecttomlTemplate",
+            Path(self.templates_folder()) / self.template_subfolder,
+            "root",
+            "pyprojecttoml.template",
+        )
 
     def git_add_files(self, gitAdd):
         """
