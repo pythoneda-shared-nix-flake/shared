@@ -52,8 +52,8 @@ class NixFlakeInput(ValueObject):
         super().__init__()
         self._name = name
         self._version = version
-        self._inputs = [input for input in inputs if input.name != name]
         self._url_for = urlFor
+        self._inputs = [input for input in inputs if input.name != name]
         self._follows = []
 
     @classmethod
@@ -86,7 +86,6 @@ class NixFlakeInput(ValueObject):
         return self._version
 
     @property
-    @attribute
     def url_for(self) -> Callable[[str], str]:
         """
         Retrieves a function to obtain the url for a given version.
