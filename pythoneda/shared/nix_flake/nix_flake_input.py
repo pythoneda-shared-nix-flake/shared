@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import attribute, primary_key_attribute, ValueObject
+import re
 from typing import Callable, List
 
 
@@ -167,3 +168,28 @@ class NixFlakeInput(ValueObject):
         :rtype: pythoneda.shared.nix_flake.NixFlakeInput
         """
         return self.__class__(self.name, version, self.url_for, self.inputs)
+
+    @property
+    def normalized_name(self) -> str:
+        """
+        Normalizes the name of the input, according to Nix flake conventions.
+        :return: The normalized name.
+        :rtype: str
+        """
+        return re.sub(r"_\d+$", "", self.name)
+
+    @property
+    def name_in_camelcase(self) -> str:
+        """
+        Returns the name in camel case.
+        :return: The name in camel case.
+        """
+        return self.__class__.kebab_to_camel(self.name)
+
+    @property
+    def normalized_name_in_camelcase(self) -> str:
+        """
+        Returns the name in camel case.
+        :return: The name in camel case.
+        """
+        return self.__class__.kebab_to_camel(self.normalized_name)

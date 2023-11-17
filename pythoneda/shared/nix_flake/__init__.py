@@ -33,6 +33,7 @@ from .flake_lock_update_failed import FlakeLockUpdateFailed
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
 from .nix_flake_metadata import NixFlakeMetadata
 from .nix_flake_input import NixFlakeInput
+from .nix_flake_input_relationship import NixFlakeInputRelationship
 from .nix_flake_spec import NixFlakeSpec
 from .nix_flake import NixFlake
 from .nixos_nix_flake import NixosNixFlake
