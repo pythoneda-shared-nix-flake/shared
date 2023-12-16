@@ -97,6 +97,16 @@ class NixFlakeInput(ValueObject):
 
     @property
     @attribute
+    def url(self) -> str:
+        """
+        Retrieves the url.
+        :return: Such information.
+        :rtype: str
+        """
+        return self.url_for.url_for(self.version)
+
+    @property
+    @attribute
     def inputs(self) -> List:
         """
         Retrieves this input's own inputs.
