@@ -21,7 +21,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
 from .nix_flake import NixFlake
 from .nixos_nix_flake import NixosNixFlake
-from typing import List
 
 
 class PythonedaSharedPythonedaBannerNixFlake(NixFlake):

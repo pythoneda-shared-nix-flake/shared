@@ -45,8 +45,8 @@ class NixFlakeInput(ValueObject):
         :type name: str
         :param version: The version of the input.
         :type version: str
-        :param url_for: The function to retrieve the url for a given version.
-        :type url_for: Callable[[str], str]
+        :param urlFor: The function to retrieve the url for a given version.
+        :type urlFor: Callable[[str], str]
         :param inputs: Its own inputs.
         :type inputs: Dict
         """
@@ -54,7 +54,7 @@ class NixFlakeInput(ValueObject):
         self._name = name
         self._version = version
         self._url_for = urlFor
-        self._inputs = [input for input in inputs if input.name != name]
+        self._inputs = [aux for aux in inputs if aux.name != name]
         self._follows = []
 
     @classmethod
@@ -64,7 +64,7 @@ class NixFlakeInput(ValueObject):
         :return: An empty instance.
         :rtype: pythoneda.shared.nix_flake.NixFlakeInput
         """
-        return cls(None, None, [])
+        return cls(None, None, None)
 
     @property
     @primary_key_attribute
@@ -103,7 +103,7 @@ class NixFlakeInput(ValueObject):
         :return: Such information.
         :rtype: str
         """
-        return self.url_for.url_for(self.version)
+        return self.url_for(self.version)
 
     @property
     @attribute
@@ -155,7 +155,7 @@ class NixFlakeInput(ValueObject):
         """
         result = None
         if varName == "inputs":
-            result = [input.to_dict() for input in self._inputs]
+            result = [aux.to_dict() for aux in self._inputs]
         else:
             result = super()._get_attribute_to_json(varName)
         return result

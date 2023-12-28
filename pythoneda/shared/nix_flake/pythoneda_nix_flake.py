@@ -18,12 +18,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from .flake_utils_nix_flake import FlakeUtilsNixFlake
 from .nix_flake import NixFlake
-from .nix_flake_input import NixFlakeInput
 from path import Path
 from pythoneda import attribute
-from typing import List
+from typing import List, Callable
 
 
 class PythonedaNixFlake(NixFlake):
@@ -45,7 +43,7 @@ class PythonedaNixFlake(NixFlake):
         self,
         name: str,
         version: str,
-        url: str,
+        url: Callable[[str], str],
         inputs: List,
         description: str,
         homepage: str,
@@ -109,9 +107,9 @@ class PythonedaNixFlake(NixFlake):
         :rtype: List
         """
         return [
-            input
-            for input in self._inputs
-            if not input.name in ["nixos", "flake-utils"]
+            aux
+            for aux in self._inputs
+            if aux.name not in ["nixos", "flake-utils"]
         ]
 
     @property

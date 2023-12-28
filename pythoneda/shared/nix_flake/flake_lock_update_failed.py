@@ -38,8 +38,8 @@ class FlakeLockUpdateFailed(Exception):
         Creates a new instance.
         :param repositoryFolder: The repository folder.
         :type repositoryFolder: str
-        :param flakeSubfolder: The subfolder of the flake.nix file.
-        :type flakeSubfolder: str
+        :param subfolder: The subfolder of the flake.nix file.
+        :type subfolder: str
         """
         super().__init__(
             f'"nix flake update {subfolder}" in folder {repositoryFolder} failed'

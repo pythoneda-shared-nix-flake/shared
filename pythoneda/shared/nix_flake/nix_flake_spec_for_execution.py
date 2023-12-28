@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from .nix_flake_spec import NixFlakeSpec
 from pythoneda import primary_key_attribute
 
+
 class NixFlakeSpecForExecution(NixFlakeSpec):
     """
     Specification of a Nix Flake used to execute code.
@@ -34,7 +35,7 @@ class NixFlakeSpecForExecution(NixFlakeSpec):
         - pythoneda.shared.nix_flake.NixFlakeSpec
     """
 
-    def __init__(self, spec:NixFlakeSpec):
+    def __init__(self, spec: NixFlakeSpec):
         """
         Creates a new NixFlakeSpecForExecution instance.
         :param spec: The Nix flake spec.
@@ -53,7 +54,7 @@ class NixFlakeSpecForExecution(NixFlakeSpec):
         """
         return self._nix_flake_spec
 
-    def __getattr__(self, name:str):
+    def __getattr__(self, name: str):
         """
         Retrieves the value of a specific attribute.
         :param name: The attribute name.

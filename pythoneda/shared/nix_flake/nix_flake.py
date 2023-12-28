@@ -19,16 +19,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .nix_flake_input import NixFlakeInput
+from .flake_lock_update_failed import FlakeLockUpdateFailed
 import asyncio
 import os
 from pathlib import Path
 from pythoneda import attribute, primary_key_attribute, Entity
 from pythoneda.shared.git import GitAdd, GitInit
-from pythoneda.shared.nix_flake import License
+from pythoneda.shared.nix_flake import License, FlakeLockUpdateFailed
 from stringtemplate3 import PathGroupLoader, StringTemplateGroup
 import subprocess
 import tempfile
-from typing import Callable, Dict, List
+from typing import Callable, List
 
 
 class NixFlake(Entity):
@@ -99,8 +100,8 @@ class NixFlake(Entity):
         self._maintainers = maintainers
         self._copyright_year = copyrightYear
         self._copyright_holder = copyrightHolder
-        for input in self._inputs:
-            input.bind(self)
+        for bindable_input in self._inputs:
+            bindable_input.bind(self)
 
     @classmethod
     def empty(cls):
@@ -133,7 +134,7 @@ class NixFlake(Entity):
 
     @property
     @primary_key_attribute
-    def url_for(self) -> Callable[[str], str]:
+    def url_for_function(self) -> Callable[[str], str]:
         """
         Retrieves the function to obtain the url of the flake from a given version.
         :return: Such function.
@@ -150,6 +151,50 @@ class NixFlake(Entity):
         :rtype: List
         """
         return self._inputs
+
+    def update_input(self, target: NixFlakeInput) -> bool:
+        """
+        Updates given input.
+        :param target: The input to update.
+        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :return: True if the input was found and updated; False otherwise.
+        :rtype: bool
+        """
+        result = False
+        for i, item in enumerate(self.inputs):
+            if item.url == target.url:
+                self.inputs[i] = target
+                result = True
+                break
+        return result
+
+    def remove_input(self, target: NixFlakeInput) -> bool:
+        """
+        Removes given input.
+        :param target: The input to remove.
+        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :return: True if the input was found and removed; False otherwise.
+        :rtype: bool
+        """
+        result = False
+        if target in self.inputs:
+            self.inputs.remove(target)
+            result = True
+        return result
+
+    def add_input(self, target: NixFlakeInput) -> bool:
+        """
+        Adds given input.
+        :param target: The input to add.
+        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :return: True if the input was not found and added; False otherwise.
+        :rtype: bool
+        """
+        result = False
+        if target not in self.inputs:
+            self.inputs.append(target)
+            result = True
+        return result
 
     @property
     @attribute
@@ -297,7 +342,7 @@ class NixFlake(Entity):
         """
         result = None
         if varName == "inputs":
-            result = [input.to_dict() for input in self._inputs]
+            result = [aux.to_dict() for aux in self._inputs]
 
         elif varName == "license":
             if self._license is None:
@@ -496,7 +541,7 @@ class NixFlake(Entity):
 
     @classmethod
     async def update_flake_lock(
-        self, repositoryFolder: str, flakeSubfolder: str = None
+        cls, repositoryFolder: str, flakeSubfolder: str = None
     ):
         """
         Updates the flake.lock file.

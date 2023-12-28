@@ -99,8 +99,6 @@ class NixFlakeMetadata(Entity):
         :return: The metadata, of None if it could not be extracted.
         :rtype: pythoneda.shared.nix_flake.NixFlakeMetadata
         """
-        result = None
-
         command = f"nix flake metadata --json {flakeRef}"
         execution = subprocess.run(command, shell=True, capture_output=True, text=True)
         if execution.returncode != 0:
@@ -164,7 +162,7 @@ class NixFlakeMetadata(Entity):
                 if node is not None and node not in root_inputs
             ]
             self._indirect_inputs = [
-                input for input in self._indirect_inputs if input is not None
+                aux for aux in self._indirect_inputs if aux is not None
             ]
         return self._indirect_inputs
 
@@ -185,17 +183,17 @@ class NixFlakeMetadata(Entity):
                 .get("original", {})
             )
             if data.get("type", None) == "github":
-                owner = data["owner"]
-                repo = data["repo"]
-                version = data["ref"]
-                dir = data.get("dir", None)
+                aux_owner = data["owner"]
+                aux_repo = data["repo"]
+                aux_version = data["ref"]
+                aux_dir = data.get("dir", None)
 
                 inputs = self._get_inputs(node)
 
                 result = NixFlakeInput(
                     node,
-                    version,
-                    GithubUrlFor(owner, repo, dir).url_for,
+                    aux_version,
+                    GithubUrlFor(aux_owner, aux_repo, aux_dir).url_for,
                     inputs,
                 )
                 self._inputs_by_node[node] = result
@@ -227,15 +225,15 @@ class NixFlakeMetadata(Entity):
         """
         if self._input_versions is None:
             self._input_versions = {}
-            for input in self.inputs():
-                normalized_name = input.normalized_name
-                self._input_versions[normalized_name] = input.version
-                self._input_versions[input.name] = input.version
-            for input in self.indirect_inputs():
-                normalized_name = input.normalized_name
+            for aux in self.inputs():
+                normalized_name = aux.normalized_name
+                self._input_versions[normalized_name] = aux.version
+                self._input_versions[aux.name] = aux.version
+            for aux in self.indirect_inputs():
+                normalized_name = aux.normalized_name
                 if self._input_versions.get(normalized_name, None) is None:
-                    self._input_versions[normalized_name] = input.version
-                self._input_versions[input.name] = input.version
+                    self._input_versions[normalized_name] = aux.version
+                self._input_versions[aux.name] = aux.version
 
     def duplicated_inputs(self) -> List[NixFlakeInput]:
         """
@@ -247,9 +245,9 @@ class NixFlakeMetadata(Entity):
             self._duplicated_inputs = []
             self._process_all_inputs()
             self._input_versions = {}
-            for input in self.all_inputs():
-                if self.has_duplicates(input):
-                    self._duplicated_inputs.append(input)
+            for aux in self.all_inputs():
+                if self.has_duplicates(aux):
+                    self._duplicated_inputs.append(aux)
         return self._duplicated_inputs
 
     def inputs_with_no_duplicates(self) -> List[NixFlakeInput]:
@@ -261,7 +259,7 @@ class NixFlakeMetadata(Entity):
         if self._inputs_with_no_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
             self._inputs_with_no_duplicates = [
-                input for input in self.inputs() if input not in duplicated_inputs
+                aux for aux in self.inputs() if aux not in duplicated_inputs
             ]
         return self._inputs_with_no_duplicates
 
@@ -274,7 +272,7 @@ class NixFlakeMetadata(Entity):
         if self._inputs_with_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
             self._inputs_with_duplicates = [
-                input for input in self.inputs() if input in duplicated_inputs
+                aux for aux in self.inputs() if aux in duplicated_inputs
             ]
         return self._inputs_with_duplicates
 
@@ -287,9 +285,9 @@ class NixFlakeMetadata(Entity):
         if self._inputs_with_duplicates_with_same_version is None:
             inputs_with_duplicates = self.inputs_with_duplicates()
             self._inputs_with_duplicates_with_same_version = [
-                input
-                for input in inputs_with_duplicates
-                if self.has_duplicates_with_same_version(input)
+                aux
+                for aux in inputs_with_duplicates
+                if self.has_duplicates_with_same_version(aux)
             ]
         return self._inputs_with_duplicates_with_same_version
 
@@ -302,9 +300,9 @@ class NixFlakeMetadata(Entity):
         if self._inputs_with_duplicates_with_different_versions is None:
             inputs_with_duplicates = self.inputs_with_duplicates()
             self._inputs_with_duplicates_with_different_versions = [
-                input
-                for input in inputs_with_duplicates
-                if self.has_duplicates_with_different_versions(input)
+                aux
+                for aux in inputs_with_duplicates
+                if self.has_duplicates_with_different_versions(aux)
             ]
         return self._inputs_with_duplicates_with_different_versions
 
@@ -317,9 +315,9 @@ class NixFlakeMetadata(Entity):
         if self._indirect_inputs_with_no_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
             self._indirect_inputs_with_no_duplicates = [
-                input
-                for input in self.indirect_inputs()
-                if input not in duplicated_inputs
+                aux
+                for aux in self.indirect_inputs()
+                if aux not in duplicated_inputs
             ]
         return self._indirect_inputs_with_no_duplicates
 
@@ -332,7 +330,7 @@ class NixFlakeMetadata(Entity):
         if self._indirect_inputs_with_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
             self._indirect_inputs_with_duplicates = [
-                input for input in self.indirect_inputs() if input in duplicated_inputs
+                aux for aux in self.indirect_inputs() if aux in duplicated_inputs
             ]
         return self._indirect_inputs_with_duplicates
 
@@ -345,9 +343,9 @@ class NixFlakeMetadata(Entity):
         if self._indirect_inputs_with_duplicates_with_same_version is None:
             indirect_inputs_with_duplicates = self.indirect_inputs_with_duplicates()
             self._indirect_inputs_with_duplicates_with_same_version = [
-                input
-                for input in indirect_inputs_with_duplicates
-                if self.has_duplicates_with_same_version(input)
+                aux
+                for aux in indirect_inputs_with_duplicates
+                if self.has_duplicates_with_same_version(aux)
             ]
         return self._indirect_inputs_with_duplicates_with_same_version
 
@@ -362,9 +360,9 @@ class NixFlakeMetadata(Entity):
         if self._indirect_inputs_with_duplicates_with_different_versions is None:
             indirect_inputs_with_duplicates = self.indirect_inputs_with_duplicates()
             self._indirect_inputs_with_duplicates_with_different_versions = [
-                input
-                for input in indirect_inputs_with_duplicates
-                if self.has_duplicates_with_different_versions(input)
+                aux
+                for aux in indirect_inputs_with_duplicates
+                if self.has_duplicates_with_different_versions(aux)
             ]
         return self._indirect_inputs_with_duplicates_with_different_versions
 
@@ -383,59 +381,59 @@ class NixFlakeMetadata(Entity):
             ]
         return self._all_inputs
 
-    def get_duplicates(self, input: NixFlakeInput) -> List[NixFlakeInput]:
+    def get_duplicates(self, target: NixFlakeInput) -> List[NixFlakeInput]:
         """
         Retrieves the duplicates of given input.
-        :param input: The input.
-        :type input: pythoneda.shared.nix_flake.NixFlakeInput
+        :param target: The input.
+        :type target: pythoneda.shared.nix_flake.NixFlakeInput
         :return: The list of duplicates.
         :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
         """
         result = []
-        if input is not None:
+        if target is not None:
             for candidate in self.all_inputs():
                 if (
-                    input != candidate
+                    target != candidate
                     and candidate is not None
-                    and input.normalized_name == candidate.normalized_name
+                    and target.normalized_name == candidate.normalized_name
                 ):
                     result.append(candidate)
 
         return result
 
-    def has_duplicates(self, input: NixFlakeInput) -> bool:
+    def has_duplicates(self, target: NixFlakeInput) -> bool:
         """
         Checks if given input has duplicates with different version.
-        :param input: The input.
-        :type input: pythoneda.shared.nix_flake.NixFlakeInput
+        :param target: The input.
+        :type target: pythoneda.shared.nix_flake.NixFlakeInput
         :return: True in such case.
         :rtype: bool
         """
-        return len(self.get_duplicates(input)) > 0
+        return len(self.get_duplicates(target)) > 0
 
-    def has_duplicates_with_same_version(self, input: NixFlakeInput) -> bool:
+    def has_duplicates_with_same_version(self, target: NixFlakeInput) -> bool:
         """
         Checks if given input has duplicates with same version.
-        :param input: The input.
-        :type input: pythoneda.shared.nix_flake.NixFlakeInput
+        :param target: The input.
+        :type target: pythoneda.shared.nix_flake.NixFlakeInput
         :return: True in such case.
         :rtype: bool
         """
         return self.has_duplicates(
-            input
-        ) and not self.has_duplicates_with_different_versions(input)
+            target
+        ) and not self.has_duplicates_with_different_versions(target)
 
-    def has_duplicates_with_different_versions(self, input: NixFlakeInput) -> bool:
+    def has_duplicates_with_different_versions(self, target: NixFlakeInput) -> bool:
         """
         Checks if given input has duplicates with different versions.
-        :param input: The input.
-        :type input: pythoneda.shared.nix_flake.NixFlakeInput
+        :param target: The input.
+        :type target: pythoneda.shared.nix_flake.NixFlakeInput
         :return: True in such case.
         :rtype: bool
         """
         result = False
-        for candidate in self.get_duplicates(input):
-            if candidate.version != input.version:
+        for candidate in self.get_duplicates(target):
+            if candidate.version != target.version:
                 result = True
                 break
 
