@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/nix_flake.py
 
@@ -23,7 +24,7 @@ from .flake_lock_update_failed import FlakeLockUpdateFailed
 import asyncio
 import os
 from pathlib import Path
-from pythoneda import attribute, primary_key_attribute, Entity
+from pythoneda.shared import attribute, primary_key_attribute, Entity
 from pythoneda.shared.git import GitAdd, GitInit
 from pythoneda.shared.nix_flake import License, FlakeLockUpdateFailed
 from stringtemplate3 import PathGroupLoader, StringTemplateGroup
@@ -108,7 +109,7 @@ class NixFlake(Entity):
         """
         Builds an empty instance. Required for unmarshalling.
         :return: An empty instance.
-        :rtype: pythoneda.ValueObject
+        :rtype: pythoneda.shared.nix_flake.NixFlake
         """
         return cls(None, None, None, [], None, None, None, None, [], None, None)
 
@@ -540,9 +541,7 @@ class NixFlake(Entity):
         return result
 
     @classmethod
-    async def update_flake_lock(
-        cls, repositoryFolder: str, flakeSubfolder: str = None
-    ):
+    async def update_flake_lock(cls, repositoryFolder: str, flakeSubfolder: str = None):
         """
         Updates the flake.lock file.
         :param repositoryFolder: The repository folder.

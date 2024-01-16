@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/nix_flake_spec_for_execution.py
 
@@ -19,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .nix_flake_spec import NixFlakeSpec
-from pythoneda import primary_key_attribute
+from pythoneda.shared import primary_key_attribute
 
 
 class NixFlakeSpecForExecution(NixFlakeSpec):
@@ -41,7 +42,9 @@ class NixFlakeSpecForExecution(NixFlakeSpec):
         :param spec: The Nix flake spec.
         :type spec: pythoneda.shared.nix_flake.NixFlakeSpec
         """
-        super().__init__(f"{spec.name}-for-execution", spec.version_spec, spec.url, spec.input_specs)
+        super().__init__(
+            f"{spec.name}-for-execution", spec.version_spec, spec.url, spec.input_specs
+        )
         self._nix_flake_spec = spec
 
     @property

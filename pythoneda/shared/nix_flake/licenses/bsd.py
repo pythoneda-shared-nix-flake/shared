@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/licenses/bsd.py
 
@@ -68,7 +69,7 @@ class Bsd(License):
         """
         Retrieves an empty instance, required JSON deserialization.
         :return: An empty License instance.
-        :rtype: pythoneda.shared.nix_flake.licenses.Mit
+        :rtype: pythoneda.shared.nix_flake.licenses.Bsd
         """
         return cls(None, None, None)
 

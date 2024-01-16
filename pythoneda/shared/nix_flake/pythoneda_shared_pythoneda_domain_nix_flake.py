@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/pythoneda_shared_pythoneda_domain_input.py
 

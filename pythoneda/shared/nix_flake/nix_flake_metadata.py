@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/nix_flake_metadata.py
 
@@ -22,7 +23,7 @@ from .github_url_for import GithubUrlFor
 import json
 from .nix_flake_input import NixFlakeInput
 from .nix_flake_input_relationship import NixFlakeInputRelationship
-from pythoneda import attribute, Entity
+from pythoneda.shared import attribute, Entity
 import subprocess
 from typing import Dict, List
 
@@ -315,9 +316,7 @@ class NixFlakeMetadata(Entity):
         if self._indirect_inputs_with_no_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
             self._indirect_inputs_with_no_duplicates = [
-                aux
-                for aux in self.indirect_inputs()
-                if aux not in duplicated_inputs
+                aux for aux in self.indirect_inputs() if aux not in duplicated_inputs
             ]
         return self._indirect_inputs_with_no_duplicates
 

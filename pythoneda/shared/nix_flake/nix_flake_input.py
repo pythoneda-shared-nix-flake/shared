@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/nix_flake_input.py
 
@@ -18,7 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda import attribute, primary_key_attribute, ValueObject
+from pythoneda.shared import attribute, primary_key_attribute, ValueObject
 import re
 from typing import Callable, List
 
@@ -33,7 +34,7 @@ class NixFlakeInput(ValueObject):
         - Contains metadata about an input in a Nix Flake.
 
     Collaborators:
-        - pythoneda.ValueObject
+        - pythoneda.shared.ValueObject
     """
 
     def __init__(

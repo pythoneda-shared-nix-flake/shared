@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/nix_flake.py
 
@@ -18,9 +19,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from pythoneda.shared import BaseObject
 
 
-class FlakeLockUpdateFailed(Exception):
+class FlakeLockUpdateFailed(Exception, BaseObject):
     """
     Running nix flake update failed.
 

@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/license.py
 
@@ -19,7 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import abc
-from pythoneda import attribute, primary_key_attribute, Entity
+from pythoneda.shared import attribute, primary_key_attribute, Entity
+
 
 class License(Entity, abc.ABC):
 
@@ -35,7 +37,10 @@ class License(Entity, abc.ABC):
     Collaborators:
         - None
     """
-    def __init__(self, preamble:str, copyrightYear:int, copyrightHolder:str, url:str):
+
+    def __init__(
+        self, preamble: str, copyrightYear: int, copyrightHolder: str, url: str
+    ):
         """
         Creates a new license instance.
         :param preamble: The license preamble.
@@ -122,7 +127,7 @@ class License(Entity, abc.ABC):
         return self.__class__.license_type()
 
     @classmethod
-    def from_id(cls, idValue:str, copyrightYear:int, copyrightHolder:str, url:str):
+    def from_id(cls, idValue: str, copyrightYear: int, copyrightHolder: str, url: str):
         """
         Retrieves the license for given id, customized for given copyright information.
         :param idValue: The license id.

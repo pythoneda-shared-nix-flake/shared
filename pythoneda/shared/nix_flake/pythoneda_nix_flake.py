@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/pythoneda_nix_flake.py
 
@@ -20,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .nix_flake import NixFlake
 from path import Path
-from pythoneda import attribute
+from pythoneda.shared import attribute
 from typing import List, Callable
 
 
@@ -94,7 +95,7 @@ class PythonedaNixFlake(NixFlake):
         """
         Builds an empty instance. Required for unmarshalling.
         :return: An empty instance.
-        :rtype: pythoneda.ValueObject
+        :rtype: pythoneda.shared.nix_flake.PythonedaNixFlake
         """
         return cls(None, None, None, [], None, None, None, None, None)
 
@@ -106,17 +107,13 @@ class PythonedaNixFlake(NixFlake):
         :return: Such collection.
         :rtype: List
         """
-        return [
-            aux
-            for aux in self._inputs
-            if aux.name not in ["nixos", "flake-utils"]
-        ]
+        return [aux for aux in self._inputs if aux.name not in ["nixos", "flake-utils"]]
 
     @property
     @attribute
     def arch_role(self) -> str:
         """
-        Retrieves the architectural role. See pythoneda.application.ArchRole.
+        Retrieves the architectural role. See pythoneda.shared.artifact.ArchRole.
         :return: Such information.
         :rtype: str
         """
@@ -126,7 +123,7 @@ class PythonedaNixFlake(NixFlake):
     @attribute
     def pescio_space(self) -> str:
         """
-        Retrieves the Pescio space. See pythoneda.application.PescioSpace.
+        Retrieves the Pescio space. See pythoneda.shared.artifact.PescioSpace.
         :return: Such information.
         :rtype: str
         """
@@ -136,7 +133,7 @@ class PythonedaNixFlake(NixFlake):
     @attribute
     def hexagonal_layer(self) -> str:
         """
-        Retrieves which hexagonal layer the project represents. See pythoneda.application.HexagonalLayer.
+        Retrieves which hexagonal layer the project represents. See pythoneda.shared.artifact.HexagonalLayer.
         :return: Such information.
         :rtype hexagonalLayer: str
         """

@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/nix_flake/nix_flake_input_relationship.py
 
@@ -19,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .nix_flake_input import NixFlakeInput
-from pythoneda import primary_key_attribute, ValueObject
+from pythoneda.shared import primary_key_attribute, ValueObject
 
 
 class NixFlakeInputRelationship(ValueObject):
@@ -33,7 +34,7 @@ class NixFlakeInputRelationship(ValueObject):
 
     Collaborators:
         - pythoneda.shared.nix_flake.NixFlakeMetadata
-        - pythoneda.ValueObject
+        - pythoneda.shared.ValueObject
     """
 
     def __init__(self, source: NixFlakeInput, destination: NixFlakeInput):
