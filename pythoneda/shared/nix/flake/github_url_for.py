@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/github_url_for.py
+pythoneda/shared/nix/flake/github_url_for.py
 
 This file declares the GithubUrlFor class.
 
@@ -96,3 +96,13 @@ class GithubUrlFor(ValueObject):
         owner = self.owner
         repo = self.repo
         return f"github:{owner}/{repo}/{version}{suffix}"
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

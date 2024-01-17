@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/pythoneda_shared_pythoneda_domain_input.py
+pythoneda/shared/nix/flake/flake_utils_nix_flake.py
 
-This file defines the PythonedaSharedPythonedaDomainInput class.
+This file defines the FlakeUtilsNixFlake class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -19,44 +19,52 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from .pythoneda_nix_flake import PythonedaNixFlake
-from typing import List
+from .nix_flake import NixFlake
 
 
-class PythonedaSharedPythonedaDomainNixFlake(PythonedaNixFlake):
+class FlakeUtilsNixFlake(NixFlake):
 
     """
-    Nix flake pythoneda-shared-pythoneda/domain.
+    Represents a flake-utils Nix flake.
 
-    Class name: PythonedaSharedPythonedaDomainNixFlake
+    Class name: FlakeUtilsNixFlake
 
     Responsibilities:
-        - Provides a way to build pythoneda-shared-pythoneda/domain.
-        - Provides a way to run pythoneda-shared-pythoneda/domain.
+        - Provides a way to build numtide/flake-utils.
+        - Provides a way to run numtide/flake-utils.
 
     Collaborators:
         - pythoneda.shared.nix_flake.NixFlake
     """
 
-    def __init__(self, version: str, inputs: List):
+    def __init__(self, version: str):
         """
-        Creates a new PythonedaSharedPythonedaDomainNixFlake instance.
+        Creates a new FlakeUtilsNixFlake instance.
         :param version: The version.
         :type version: str
-        :param inputs: The inputs.
-        :type inputs: List[pythoneda.shared.nix_flake.NixFlake]
         """
         super().__init__(
-            "pythoneda-shared-pythoneda-domain",
+            "flake-utils",
             version,
             self.url_for,
-            inputs,
-            "Support for event-driven architectures in Python",
-            "https://github.com/pythoneda-shared-pythoneda/domain",
-            "S",
-            "D",
-            "D",
+            [],
+            None,
+            "Pure Nix flake utility functions",
+            "https://github.com/numtide/flake-utils",
+            "mit",
+            list("https://github.com/zimbatm"),
+            2022,
+            "https://github.com/numtide",
         )
+
+    @classmethod
+    def default(cls):
+        """
+        Retrieves the default version of the flake-utils Nix flake input.
+        :return: Such instance.
+        :rtype: pythoneda.shared.nix_flake.FlakeUtilsNixFlake
+        """
+        return cls("v1.0.0")
 
     def url_for(self, version: str) -> str:
         """
@@ -66,4 +74,14 @@ class PythonedaSharedPythonedaDomainNixFlake(PythonedaNixFlake):
         :return: The url.
         :rtype: str
         """
-        return f"github:pythoneda-shared-pythoneda/domain-artifact/{version}?dir=domain"
+        return f"github:numtide/flake-utils/{version}"
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

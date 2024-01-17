@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nix_flake_metadata.py
+pythoneda/shared/nix/flake/nix_flake_metadata.py
 
 This file defines the NixFlakeMetadata class.
 
@@ -98,7 +98,7 @@ class NixFlakeMetadata(Entity):
         :param flakeRef: The flake reference (a folder or an url).
         :type flakeRef: str
         :return: The metadata, of None if it could not be extracted.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeMetadata
+        :rtype: pythoneda.shared.nix.flake.NixFlakeMetadata
         """
         command = f"nix flake metadata --json {flakeRef}"
         execution = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -173,7 +173,7 @@ class NixFlakeMetadata(Entity):
         :param node: The node name.
         :type node: str
         :return: The Nix flake input.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeMetadata
+        :rtype: pythoneda.shared.nix.flake.NixFlakeMetadata
         """
         result = self._inputs_by_node.get(node, None)
         if result is None:
@@ -240,7 +240,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of duplicated inputs.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._duplicated_inputs is None:
             self._duplicated_inputs = []
@@ -255,7 +255,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of direct inputs with no duplicates.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._inputs_with_no_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
@@ -268,7 +268,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of direct inputs with duplicates.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._inputs_with_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
@@ -281,7 +281,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of direct inputs with duplicates, sharing the same version.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._inputs_with_duplicates_with_same_version is None:
             inputs_with_duplicates = self.inputs_with_duplicates()
@@ -296,7 +296,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of direct inputs with duplicates, with different versions.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._inputs_with_duplicates_with_different_versions is None:
             inputs_with_duplicates = self.inputs_with_duplicates()
@@ -311,7 +311,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of indirect inputs with no duplicates.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._indirect_inputs_with_no_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
@@ -324,7 +324,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of indirect inputs with duplicates.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._indirect_inputs_with_duplicates is None:
             duplicated_inputs = self.duplicated_inputs()
@@ -337,7 +337,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of indirect inputs with duplicates, sharing the same version.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._indirect_inputs_with_duplicates_with_same_version is None:
             indirect_inputs_with_duplicates = self.indirect_inputs_with_duplicates()
@@ -354,7 +354,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the list of indirect inputs with duplicates, with different versions.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._indirect_inputs_with_duplicates_with_different_versions is None:
             indirect_inputs_with_duplicates = self.indirect_inputs_with_duplicates()
@@ -369,7 +369,7 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves all inputs.
         :return: Such list.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         if self._all_inputs is None:
             self._all_inputs = []
@@ -384,9 +384,9 @@ class NixFlakeMetadata(Entity):
         """
         Retrieves the duplicates of given input.
         :param target: The input.
-        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :type target: pythoneda.shared.nix.flake.NixFlakeInput
         :return: The list of duplicates.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         result = []
         if target is not None:
@@ -404,7 +404,7 @@ class NixFlakeMetadata(Entity):
         """
         Checks if given input has duplicates with different version.
         :param target: The input.
-        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :type target: pythoneda.shared.nix.flake.NixFlakeInput
         :return: True in such case.
         :rtype: bool
         """
@@ -414,7 +414,7 @@ class NixFlakeMetadata(Entity):
         """
         Checks if given input has duplicates with same version.
         :param target: The input.
-        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :type target: pythoneda.shared.nix.flake.NixFlakeInput
         :return: True in such case.
         :rtype: bool
         """
@@ -426,7 +426,7 @@ class NixFlakeMetadata(Entity):
         """
         Checks if given input has duplicates with different versions.
         :param target: The input.
-        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :type target: pythoneda.shared.nix.flake.NixFlakeInput
         :return: True in such case.
         :rtype: bool
         """
@@ -468,3 +468,13 @@ class NixFlakeMetadata(Entity):
                         )
                     relationships[source] = destination
         return self._relationships_for_duplicated_nodes
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

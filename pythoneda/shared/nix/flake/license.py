@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/license.py
+pythoneda/shared/nix/flake/license.py
 
 This file defines the License class.
 
@@ -63,7 +63,7 @@ class License(Entity, abc.ABC):
         """
         Retrieves an empty instance, required JSON deserialization.
         :return: An empty License instance.
-        :rtype: pythoneda.shared.nix_flake.License
+        :rtype: pythoneda.shared.nix.flake.License
         """
         return cls(None, None, None, None)
 
@@ -139,7 +139,7 @@ class License(Entity, abc.ABC):
         :param url: The project url.
         :type url: str
         :return: The license, of None if none found.
-        :rtype: pythoneda.shared.nix_flake.License
+        :rtype: pythoneda.shared.nix.flake.License
         """
         result = None
         for license_class in License.__subclasses__():
@@ -147,3 +147,13 @@ class License(Entity, abc.ABC):
                 result = license_class(copyrightYear, copyrightHolder, url)
                 break
         return result
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

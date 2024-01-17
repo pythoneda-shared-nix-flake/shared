@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/licenses/__init__.py
+pythoneda/shared/nix/__init__.py
 
-This file ensures pythoneda.shared.nix_flake.licenses is a package.
+This file ensures pythoneda.shared.nix is a namespace.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -20,7 +20,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
-
-from .gpl3 import Gpl3
-from .mit import Mit
-from .asl20 import Asl20
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

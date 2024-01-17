@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nix_flake_input_relationship.py
+pythoneda/shared/nix/flake/nix_flake_input_relationship.py
 
 This file declares the NixFlakeInputRelationship class.
 
@@ -33,7 +33,7 @@ class NixFlakeInputRelationship(ValueObject):
         - Represents a relationship between two Nix flakes.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlakeMetadata
+        - pythoneda.shared.nix.flake.NixFlakeMetadata
         - pythoneda.shared.ValueObject
     """
 
@@ -41,9 +41,9 @@ class NixFlakeInputRelationship(ValueObject):
         """
         Creates a new NixFlakeInputRelationship instance.
         :param source: The source input.
-        :type source: pythoneda.shared.nix_flake.NixFlakeInput
+        :type source: pythoneda.shared.nix.flake.NixFlakeInput
         :param destination: The destination (meaning the source has this instance as input).
-        :type destination: pythoneda.shared.nix_flake.NixFlakeInput
+        :type destination: pythoneda.shared.nix.flake.NixFlakeInput
         """
         super().__init__()
         self._source = source
@@ -55,7 +55,7 @@ class NixFlakeInputRelationship(ValueObject):
         """
         Retrieves the source of the relationship.
         :return: Such input.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeInput
+        :rtype: pythoneda.shared.nix.flake.NixFlakeInput
         """
         return self._source
 
@@ -65,6 +65,16 @@ class NixFlakeInputRelationship(ValueObject):
         """
         Retrieves the destination of the relationship.
         :return: Such input.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeInput
+        :rtype: pythoneda.shared.nix.flake.NixFlakeInput
         """
         return self._destination
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

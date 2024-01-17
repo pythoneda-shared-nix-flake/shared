@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nix_flake_spec_for_execution.py
+pythoneda/shared/nix/flake/nix_flake_spec_for_execution.py
 
 This file declares the NixFlakeSpecForExecution class.
 
@@ -33,14 +33,14 @@ class NixFlakeSpecForExecution(NixFlakeSpec):
         - Defines criteria for a Nix flake used to execute code.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlakeSpec
+        - pythoneda.shared.nix.flake.NixFlakeSpec
     """
 
     def __init__(self, spec: NixFlakeSpec):
         """
         Creates a new NixFlakeSpecForExecution instance.
         :param spec: The Nix flake spec.
-        :type spec: pythoneda.shared.nix_flake.NixFlakeSpec
+        :type spec: pythoneda.shared.nix.flake.NixFlakeSpec
         """
         super().__init__(
             f"{spec.name}-for-execution", spec.version_spec, spec.url, spec.input_specs
@@ -53,7 +53,7 @@ class NixFlakeSpecForExecution(NixFlakeSpec):
         """
         Retrieves the Nix flake spec.
         :return: Such spec.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeSpec
+        :rtype: pythoneda.shared.nix.flake.NixFlakeSpec
         """
         return self._nix_flake_spec
 
@@ -66,3 +66,13 @@ class NixFlakeSpecForExecution(NixFlakeSpec):
         :rtype: Any
         """
         return getattr(self._nix_flake_spec, name)
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

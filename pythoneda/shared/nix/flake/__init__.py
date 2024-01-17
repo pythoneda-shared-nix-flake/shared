@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/__init__.py
+pythoneda/shared/nix/flake/__init__.py
 
-This file ensures pythoneda.shared.nix_flake is a package.
+This file ensures pythoneda.shared.nix/flake is a package.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -24,11 +24,11 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from .github_url_for import GithubUrlFor
 from .license import License
 from .pythoneda_nix_flake import PythonedaNixFlake
-from .pythoneda_shared_pythoneda_banner_nix_flake import (
-    PythonedaSharedPythonedaBannerNixFlake,
+from .pythoneda_shared_banner_nix_flake import (
+    PythonedaSharedBannerNixFlake,
 )
-from .pythoneda_shared_pythoneda_domain_nix_flake import (
-    PythonedaSharedPythonedaDomainNixFlake,
+from .pythoneda_shared_domain_nix_flake import (
+    PythonedaSharedDomainNixFlake,
 )
 from .flake_lock_update_failed import FlakeLockUpdateFailed
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
@@ -39,3 +39,12 @@ from .nix_flake_spec import NixFlakeSpec
 from .nix_flake import NixFlake
 from .nixos_nix_flake import NixosNixFlake
 from .nix_flake_spec_for_execution import NixFlakeSpecForExecution
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

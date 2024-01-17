@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/pythoneda_nix_flake.py
+pythoneda/shared/nix/flake/pythoneda_nix_flake.py
 
 This file defines the PythonedaNixFlake class.
 
@@ -37,7 +37,7 @@ class PythonedaNixFlake(NixFlake):
         - Knows how to run itself.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlake
+        - pythoneda.shared.nix.flake.NixFlake
     """
 
     def __init__(
@@ -61,7 +61,7 @@ class PythonedaNixFlake(NixFlake):
         :param url: The url.
         :type url: str
         :param inputs: The inputs.
-        :type inputs: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :type inputs: List[pythoneda.shared.nix.flake.NixFlakeInput]
         :param description: The flake description.
         :type description: str
         :param homepage: The project's homepage.
@@ -95,7 +95,7 @@ class PythonedaNixFlake(NixFlake):
         """
         Builds an empty instance. Required for unmarshalling.
         :return: An empty instance.
-        :rtype: pythoneda.shared.nix_flake.PythonedaNixFlake
+        :rtype: pythoneda.shared.nix.flake.PythonedaNixFlake
         """
         return cls(None, None, None, [], None, None, None, None, None)
 
@@ -178,3 +178,13 @@ class PythonedaNixFlake(NixFlake):
         :type gitAdd: pythoneda.shared.git.GitAdd
         """
         gitAdd.add("pyprojecttoml.template")
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

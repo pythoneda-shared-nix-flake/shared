@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nixos_nix_flake.py
+pythoneda/shared/nix/flake/pythoneda_shared_domain_input.py
 
-This file defines the NikosNixFlake class.
+This file defines the PythonedaSharedDomainInput class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -19,51 +19,44 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from .nix_flake import NixFlake
+from .pythoneda_nix_flake import PythonedaNixFlake
+from typing import List
 
 
-class NixosNixFlake(NixFlake):
+class PythonedaSharedDomainNixFlake(PythonedaNixFlake):
 
     """
-    Nix flake for NixOS.
+    Nix flake pythoneda-shared/domain.
 
-    Class name: NixosNixFlake
+    Class name: PythonedaSharedDomainNixFlake
 
     Responsibilities:
-        - Packages NixOS's nixpkgs as a Nix flake.
+        - Provides a way to build pythoneda-shared/domain.
+        - Provides a way to run pythoneda-shared/domain.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlake
+        - pythoneda.shared.nix.flake.NixFlake
     """
 
-    def __init__(self, version: str):
+    def __init__(self, version: str, inputs: List):
         """
-        Creates a new NixosNixFlake instance.
+        Creates a new PythonedaSharedDomainNixFlake instance.
         :param version: The version.
         :type version: str
+        :param inputs: The inputs.
+        :type inputs: List[pythoneda.shared.nix.flake.NixFlake]
         """
         super().__init__(
-            "nixos",
+            "pythoneda-shared-domain",
             version,
             self.url_for,
-            [],
-            None,
-            "A collection of packages for the Nix package manager",
-            "https://github.com/NixOS/nixpkgs",
-            "mit",
-            list("5000+ contributors"),
-            2008,
-            "https://nixos.org",
+            inputs,
+            "Support for event-driven architectures in Python",
+            "https://github.com/pythoneda-shared/domain",
+            "S",
+            "D",
+            "D",
         )
-
-    @classmethod
-    def default(cls):
-        """
-        Retrieves the default version of the NixOS/nixpkgs Nix flake input.
-        :return: Such instance.
-        :rtype: pythoneda.shared.nix_flake.NixosNixFlake
-        """
-        return cls("nixos-23.05")
 
     def url_for(self, version: str) -> str:
         """
@@ -73,4 +66,14 @@ class NixosNixFlake(NixFlake):
         :return: The url.
         :rtype: str
         """
-        return f"github:NixOS/nixpkgs/{version}"
+        return f"github:pythoneda-shared-def/domain/{version}"
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

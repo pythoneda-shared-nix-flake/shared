@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/pythoneda_shared_pythoneda_banner_nix_flake.py
+pythoneda/shared/nix/flake/pythoneda_shared_banner_nix_flake.py
 
-This file defines the PythonedaSharedPythonedaBannerNixFlake class.
+This file defines the PythonedaSharedBannerNixFlake class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -24,35 +24,35 @@ from .nix_flake import NixFlake
 from .nixos_nix_flake import NixosNixFlake
 
 
-class PythonedaSharedPythonedaBannerNixFlake(NixFlake):
+class PythonedaSharedBannerNixFlake(NixFlake):
 
     """
-    Nix flake for pythoneda-shared-pythoneda/banner.
+    Nix flake for pythoneda-shared/banner.
 
-    Class name: PythonedaSharedPythonedaBannerNixFlake
+    Class name: PythonedaSharedBannerNixFlake
 
     Responsibilities:
-        - Provides a way to build pythoneda-shared-pythoneda/banner.
-        - Provides a way to run pythoneda-shared-pythoneda/banner.
+        - Provides a way to build pythoneda-shared/banner.
+        - Provides a way to run pythoneda-shared/banner.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlake
+        - pythoneda.shared.nix.flake.NixFlake
     """
 
     def __init__(self, version: str):
         """
-        Creates a new PythonedaSharedPythonedaBannerNixFlake instance.
+        Creates a new PythonedaSharedBannerNixFlake instance.
         :param version: The version.
         :type version: str
         """
         super().__init__(
-            "pythoneda-shared-pythoneda-banner",
+            "pythoneda-shared-banner",
             version,
             self.url_for,
             [FlakeUtilsNixFlake.default(), NixosNixFlake.default()],
             "pythoneda",
             "Banner for PythonEDA projects",
-            "https://github.com/pythoneda-shared-pythoneda/banner",
+            "https://github.com/pythoneda-shared/banner",
             "gpl3",
             ["rydnr <github@acm-sl.org>"],
             2023,
@@ -67,13 +67,23 @@ class PythonedaSharedPythonedaBannerNixFlake(NixFlake):
         :return: The url.
         :rtype: str
         """
-        return f"github:pythoneda-shared-pythoneda/banner/{version}"
+        return f"github:pythoneda-shared-def/banner/{version}"
 
     @classmethod
     def default(cls):
         """
-        Retrieves the default version of the pythoneda-shared-pythoneda/banner Nix flake input.
+        Retrieves the default version of the pythoneda-shared/banner Nix flake input.
         :return: Such instance.
-        :rtype: pythoneda.shared.nix_flake.PythonedaSharedPythonedaBannerNixFlake
+        :rtype: pythoneda.shared.nix.flake.PythonedaSharedBannerNixFlake
         """
         return cls("0.0.13")
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

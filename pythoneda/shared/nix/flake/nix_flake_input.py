@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nix_flake_input.py
+pythoneda/shared/nix/flake/nix_flake_input.py
 
 This file declares the NixFlakeInput class.
 
@@ -63,7 +63,7 @@ class NixFlakeInput(ValueObject):
         """
         Creates an empty NixFlakeInput instance, required for deserializing from a JSON representation.
         :return: An empty instance.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeInput
+        :rtype: pythoneda.shared.nix.flake.NixFlakeInput
         """
         return cls(None, None, None)
 
@@ -121,7 +121,7 @@ class NixFlakeInput(ValueObject):
         """
         Retrieves the list of follows of this input, according to the flake it's bound to.
         :return: The list of other inputs in the flake that are also inputs for this input, and thus can be followed.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInput]
         """
         return self._follows
 
@@ -129,7 +129,7 @@ class NixFlakeInput(ValueObject):
         """
         Binds this input to given flake, to take into account the flake's inputs.
         :param flake: The flake.
-        :type flake: pythoneda.shared.nix_flake.NixFlake
+        :type flake: pythoneda.shared.nix.flake.NixFlake
         """
         self._follows = list(set(self.inputs) & set(flake.inputs))
 
@@ -176,7 +176,7 @@ class NixFlakeInput(ValueObject):
         :param version: The version.
         :type version: str
         :return: A copy of this dependency, updated.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeInput
+        :rtype: pythoneda.shared.nix.flake.NixFlakeInput
         """
         return self.__class__(self.name, version, self.url_for, self.inputs)
 
@@ -204,3 +204,13 @@ class NixFlakeInput(ValueObject):
         :return: The name in camel case.
         """
         return self.__class__.kebab_to_camel(self.normalized_name)
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

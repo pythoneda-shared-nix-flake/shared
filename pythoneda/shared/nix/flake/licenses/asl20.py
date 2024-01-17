@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/licenses/asl20.py
+pythoneda/shared/nix/flake/licenses/asl20.py
 
 This file defines the Asl20 class.
 
@@ -19,7 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda.shared.nix_flake import License
+from pythoneda.shared.nix.flake import License
 
 
 class Asl20(License):
@@ -35,6 +35,7 @@ class Asl20(License):
     Collaborators:
         - None
     """
+
     def __init__(self, copyrightYear: int, copyrightHolder: str, url: str):
         """
         Creates a new Asl20 instance.
@@ -53,16 +54,17 @@ class Asl20(License):
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
 """,
-                         copyrightYear,
-                         copyrightHolder,
-                         url)
+            copyrightYear,
+            copyrightHolder,
+            url,
+        )
 
     @classmethod
     def empty(cls):
         """
         Retrieves an empty instance, required JSON deserialization.
         :return: An empty License instance.
-        :rtype: pythoneda.shared.nix_flake.licenses.Asl20
+        :rtype: pythoneda.shared.nix.flake.licenses.Asl20
         """
         return cls(None, None, None)
 
@@ -74,3 +76,13 @@ class Asl20(License):
         :rtype: str
         """
         return "asl20"
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

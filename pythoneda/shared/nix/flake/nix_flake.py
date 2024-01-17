@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nix_flake.py
+pythoneda/shared/nix/flake/nix_flake.py
 
 This file defines the NixFlake class.
 
@@ -19,14 +19,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from .nix_flake_input import NixFlakeInput
 from .flake_lock_update_failed import FlakeLockUpdateFailed
+from .license import License
+from .nix_flake_input import NixFlakeInput
 import asyncio
 import os
 from pathlib import Path
 from pythoneda.shared import attribute, primary_key_attribute, Entity
 from pythoneda.shared.git import GitAdd, GitInit
-from pythoneda.shared.nix_flake import License, FlakeLockUpdateFailed
 from stringtemplate3 import PathGroupLoader, StringTemplateGroup
 import subprocess
 import tempfile
@@ -45,7 +45,7 @@ class NixFlake(Entity):
         - Knows how to run itself.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlakeInput
+        - pythoneda.shared.nix.flake.NixFlakeInput
     """
 
     def __init__(
@@ -71,7 +71,7 @@ class NixFlake(Entity):
         :param urlFor: The function to obtain the url from a given version.
         :type urlFor: Callable[[str],str]
         :param inputs: The flake inputs.
-        :type inputs: List[pythoneda.shared.nix_flake.NixFlakeInput]
+        :type inputs: List[pythoneda.shared.nix.flake.NixFlakeInput]
         :param templateSubfolder: The template subfolder, if any.
         :type templateSubfolder: str
         :param description: The flake description.
@@ -109,7 +109,7 @@ class NixFlake(Entity):
         """
         Builds an empty instance. Required for unmarshalling.
         :return: An empty instance.
-        :rtype: pythoneda.shared.nix_flake.NixFlake
+        :rtype: pythoneda.shared.nix.flake.NixFlake
         """
         return cls(None, None, None, [], None, None, None, None, [], None, None)
 
@@ -157,7 +157,7 @@ class NixFlake(Entity):
         """
         Updates given input.
         :param target: The input to update.
-        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :type target: pythoneda.shared.nix.flake.NixFlakeInput
         :return: True if the input was found and updated; False otherwise.
         :rtype: bool
         """
@@ -173,7 +173,7 @@ class NixFlake(Entity):
         """
         Removes given input.
         :param target: The input to remove.
-        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :type target: pythoneda.shared.nix.flake.NixFlakeInput
         :return: True if the input was found and removed; False otherwise.
         :rtype: bool
         """
@@ -187,7 +187,7 @@ class NixFlake(Entity):
         """
         Adds given input.
         :param target: The input to add.
-        :type target: pythoneda.shared.nix_flake.NixFlakeInput
+        :type target: pythoneda.shared.nix.flake.NixFlakeInput
         :return: True if the input was not found and added; False otherwise.
         :rtype: bool
         """
@@ -391,7 +391,7 @@ class NixFlake(Entity):
         """
         Converts this flake to an input for other flake.
         :return: The input.
-        :rtype: pythoneda.shared.nix_flake.NixFlakeInput
+        :rtype: pythoneda.shared.nix.flake.NixFlakeInput
         """
         return NixFlakeInput(self.name, self.version, self.url_for, self.inputs)
 
@@ -568,3 +568,13 @@ class NixFlake(Entity):
             raise FlakeLockUpdateFailed(repositoryFolder, flakeSubfolder)
 
         return True
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

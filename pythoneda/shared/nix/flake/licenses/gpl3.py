@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/licenses/mit.py
+pythoneda/shared/nix/flake/licenses/gpl3.py
 
-This file defines the Mit class.
+This file defines the GPL3 class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -19,18 +19,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda.shared.nix_flake import License
+from pythoneda.shared.nix.flake import License
 
 
-class Mit(License):
+class Gpl3(License):
 
     """
-    Represents the MIT license
+    Represents the GPL license, version 3 or later.
 
-    Class name: Mit
+    Class name: Gpl3
 
     Responsibilities:
-        - Provide information about the ASL 2.0 license.
+        - Provide information about the GPLv3 license.
 
     Collaborators:
         - None
@@ -38,7 +38,7 @@ class Mit(License):
 
     def __init__(self, copyrightYear: int, copyrightHolder: str, url: str):
         """
-        Creates a new MIT instance.
+        Creates a new Gpl3 instance.
         :param copyrightYear: The copyright year.
         :type copyrightYear: int
         :param copyrightHolder: The copyright holder.
@@ -46,30 +46,28 @@ class Mit(License):
         :param url: The project url.
         :type url: str
         """
-        super().__init__(f""" MIT License
+        super().__init__(
+            f""" GNU GENERAL PUBLIC LICENSE
+ Version 3, 29 June 2007
 
  Copyright (C) {copyrightYear} {copyrightHolder} {url}
 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 """,
-                         copyrightYear,
-                         copyrightHolder,
-                         url)
+            copyrightYear,
+            copyrightHolder,
+            url,
+        )
 
     @classmethod
     def empty(cls):
         """
         Retrieves an empty instance, required JSON deserialization.
         :return: An empty License instance.
-        :rtype: pythoneda.shared.nix_flake.licenses.Mit
+        :rtype: pythoneda.shared.nix.flake.licenses.Gpl3
         """
         return cls(None, None, None)
 
@@ -80,4 +78,14 @@ class Mit(License):
         :return: Such type.
         :rtype: str
         """
-        return "mit"
+        return "gpl3"
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

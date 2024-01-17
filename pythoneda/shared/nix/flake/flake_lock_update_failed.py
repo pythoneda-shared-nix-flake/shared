@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nix_flake.py
+pythoneda/shared/nix/flake/nix_flake.py
 
 This file defines the FlakeLockUpdateFailed class.
 
@@ -46,3 +46,13 @@ class FlakeLockUpdateFailed(Exception, BaseObject):
         super().__init__(
             f'"nix flake update {subfolder}" in folder {repositoryFolder} failed'
         )
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/flake_utils_nix_flake.py
+pythoneda/shared/nix/flake/nixos_nix_flake.py
 
-This file defines the FlakeUtilsNixFlake class.
+This file defines the NikosNixFlake class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -22,49 +22,48 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from .nix_flake import NixFlake
 
 
-class FlakeUtilsNixFlake(NixFlake):
+class NixosNixFlake(NixFlake):
 
     """
-    Represents a flake-utils Nix flake.
+    Nix flake for NixOS.
 
-    Class name: FlakeUtilsNixFlake
+    Class name: NixosNixFlake
 
     Responsibilities:
-        - Provides a way to build numtide/flake-utils.
-        - Provides a way to run numtide/flake-utils.
+        - Packages NixOS's nixpkgs as a Nix flake.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlake
+        - pythoneda.shared.nix.flake.NixFlake
     """
 
     def __init__(self, version: str):
         """
-        Creates a new FlakeUtilsNixFlake instance.
+        Creates a new NixosNixFlake instance.
         :param version: The version.
         :type version: str
         """
         super().__init__(
-            "flake-utils",
+            "nixos",
             version,
             self.url_for,
             [],
             None,
-            "Pure Nix flake utility functions",
-            "https://github.com/numtide/flake-utils",
+            "A collection of packages for the Nix package manager",
+            "https://github.com/NixOS/nixpkgs",
             "mit",
-            list("https://github.com/zimbatm"),
-            2022,
-            "https://github.com/numtide",
+            list("5000+ contributors"),
+            2008,
+            "https://nixos.org",
         )
 
     @classmethod
     def default(cls):
         """
-        Retrieves the default version of the flake-utils Nix flake input.
+        Retrieves the default version of the NixOS/nixpkgs Nix flake input.
         :return: Such instance.
-        :rtype: pythoneda.shared.nix_flake.FlakeUtilsNixFlake
+        :rtype: pythoneda.shared.nix.flake.NixosNixFlake
         """
-        return cls("v1.0.0")
+        return cls("nixos-23.05")
 
     def url_for(self, version: str) -> str:
         """
@@ -74,4 +73,14 @@ class FlakeUtilsNixFlake(NixFlake):
         :return: The url.
         :rtype: str
         """
-        return f"github:numtide/flake-utils/{version}"
+        return f"github:NixOS/nixpkgs/{version}"
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

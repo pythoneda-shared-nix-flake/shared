@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/licenses/bsd.py
+pythoneda/shared/nix/flake/licenses/bsd.py
 
 This file defines the Bsd class.
 
@@ -19,7 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda.shared.nix_flake import License
+from pythoneda.shared.nix.flake import License
 
 
 class Bsd(License):
@@ -69,7 +69,7 @@ class Bsd(License):
         """
         Retrieves an empty instance, required JSON deserialization.
         :return: An empty License instance.
-        :rtype: pythoneda.shared.nix_flake.licenses.Bsd
+        :rtype: pythoneda.shared.nix.flake.licenses.Bsd
         """
         return cls(None, None, None)
 
@@ -81,3 +81,13 @@ class Bsd(License):
         :rtype: str
         """
         return "bsd"
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

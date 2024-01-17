@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix_flake/nix_flake_spec.py
+pythoneda/shared/nix/flake/nix_flake_spec.py
 
 This file declares the NixFlakeSpec class.
 
@@ -46,7 +46,7 @@ class NixFlakeSpec(ValueObject):
         :param url: The url.
         :type url: str
         :param inputSpecs: Specs for the Nix flake's inputs.
-        :type inputSpecs: Dict[pythoneda.shared.nix_flake.NixFlakeSpec]
+        :type inputSpecs: Dict[pythoneda.shared.nix.flake.NixFlakeSpec]
         """
         super().__init__()
         self._name = name
@@ -90,6 +90,16 @@ class NixFlakeSpec(ValueObject):
         """
         Retrieves the specifications for the input's own inputs.
         :return: Such specifications.
-        :rtype: List[pythoneda.shared.nix_flake.NixFlakeInputSpec]
+        :rtype: List[pythoneda.shared.nix.flake.NixFlakeInputSpec]
         """
         return self._input_specs
+
+
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:
