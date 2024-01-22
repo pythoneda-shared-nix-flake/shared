@@ -34,7 +34,7 @@ class FlakeUtilsNixFlake(NixFlake):
         - Provides a way to run numtide/flake-utils.
 
     Collaborators:
-        - pythoneda.shared.nix_flake.NixFlake
+        - pythoneda.shared.nix.flake.NixFlake
     """
 
     def __init__(self, version: str):
@@ -62,7 +62,7 @@ class FlakeUtilsNixFlake(NixFlake):
         """
         Retrieves the default version of the flake-utils Nix flake input.
         :return: Such instance.
-        :rtype: pythoneda.shared.nix_flake.FlakeUtilsNixFlake
+        :rtype: pythoneda.shared.nix.flake.FlakeUtilsNixFlake
         """
         return cls("v1.0.0")
 
