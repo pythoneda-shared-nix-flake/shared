@@ -61,6 +61,7 @@ class NixFlake(Entity):
         maintainers: List,
         copyrightYear: int,
         copyrightHolder: str,
+        templatesFolder: str = None,
     ):
         """
         Creates a new NixFlake instance.
@@ -86,6 +87,8 @@ class NixFlake(Entity):
         :type copyrightYear: year
         :param copyrightHolder: The copyright holder.
         :type copyrightHolder: str
+        :param templatesFolder: The folder with the templates.
+        :type templatesFolder: str
         """
         super().__init__()
         self._name = name
@@ -101,6 +104,11 @@ class NixFlake(Entity):
         self._maintainers = maintainers
         self._copyright_year = copyrightYear
         self._copyright_holder = copyrightHolder
+        if templatesFolder:
+            self._templates_folder = templatesFolder
+        else:
+            self._templates_folder = self.default_templates_folder()
+
         for bindable_input in self._inputs:
             bindable_input.bind(self)
 
@@ -315,6 +323,15 @@ class NixFlake(Entity):
         """
         return self._homepage
 
+    @property
+    def templates_folder(self) -> str:
+        """
+        Retrieves the templates folder.
+        :return: Such folder.
+        :rtype: str
+        """
+        return self._templates_folder
+
     def _set_attribute_from_json(self, varName, varValue):
         """
         Changes the value of an attribute of this instance.
@@ -372,16 +389,20 @@ class NixFlake(Entity):
         """
         return os.path.dirname(path)
 
-    def templates_folder(self) -> str:
+    def default_templates_folder(self) -> str:
         """
-        Retrieves the templates folder.
+        Retrieves the default templates folder.
         :return: Such location.
         :rtype: str
         """
         return (
             Path(
                 self.parent_folder(
-                    self.parent_folder(self.parent_folder(self.parent_folder(__file__)))
+                    self.parent_folder(
+                        self.parent_folder(
+                            self.parent_folder(self.parent_folder(__file__))
+                        )
+                    )
                 )
             )
             / "templates"
@@ -395,19 +416,22 @@ class NixFlake(Entity):
         """
         return NixFlakeInput(self.name, self.version, self.url_for, self.inputs)
 
-    def generate_flake(self, flakeFolder: str):
+    def generate_flake(self, flakeFolder: str) -> str:
         """
         Generates the flake from a template.
         :param flakeFolder: The flake folder.
         :type flakeFolder: str
+        :return: The generated flake.nix file.
+        :rtype: str
         """
         self.process_template(
             flakeFolder,
             "FlakeNix",
-            Path(self.templates_folder()) / self.template_subfolder,
+            Path(self.templates_folder) / self.template_subfolder,
             "root",
             "flake.nix",
         )
+        return Path(flakeFolder) / "flake.nix"
 
     def process_template(
         self,
@@ -441,9 +465,6 @@ class NixFlake(Entity):
 
             root_template = group.getInstanceOf("root")
             root_template["flake"] = self
-
-        with open(Path("/tmp/debug") / outputFileName, "w") as output_file:
-            output_file.write(str(root_template))
 
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))

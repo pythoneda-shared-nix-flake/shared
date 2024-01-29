@@ -19,6 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import datetime
 from .nix_flake import NixFlake
 from path import Path
 from pythoneda.shared import attribute
@@ -51,6 +52,7 @@ class PythonedaNixFlake(NixFlake):
         archRole: str,
         pescioSpace: str,
         hexagonalLayer: str,
+        templatesFolder: str = None,
     ):
         """
         Creates a new NixFlake instance.
@@ -72,6 +74,8 @@ class PythonedaNixFlake(NixFlake):
         :type pescioSpace: str
         :param hexagonalLayer: The type of hexagonal layer. See pythoneda.application.HexagonalLayer.
         :type hexagonalLayer: str
+        :param templatesFolder: The folder with the templates.
+        :type templatesFolder: str
         """
         super().__init__(
             name,
@@ -83,8 +87,9 @@ class PythonedaNixFlake(NixFlake):
             homepage,
             "gpl3",
             ["rydnr <github@acm-sl.org>"],
-            2023,
+            datetime.datetime.now().year,
             "rydnr",
+            templatesFolder,
         )
         self._arch_role = archRole
         self._pescio_space = pescioSpace

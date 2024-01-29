@@ -1,4 +1,4 @@
-// templates/flake.stg
+// templates/pythoneda/flake.stg
 //
 // This file defines the template for PythonEDA-related Nix flakes.
 //

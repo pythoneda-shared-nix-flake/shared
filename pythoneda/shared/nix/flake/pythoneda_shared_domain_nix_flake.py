@@ -19,7 +19,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .flake_utils_nix_flake import FlakeUtilsNixFlake
+from .nixos_nix_flake import NixosNixFlake
 from .pythoneda_nix_flake import PythonedaNixFlake
+from .pythoneda_shared_banner_nix_flake import PythonedaSharedBannerNixFlake
 from typing import List
 
 
@@ -38,19 +41,21 @@ class PythonedaSharedDomainNixFlake(PythonedaNixFlake):
         - pythoneda.shared.nix.flake.NixFlake
     """
 
-    def __init__(self, version: str, inputs: List):
+    def __init__(self, version: str):
         """
         Creates a new PythonedaSharedDomainNixFlake instance.
         :param version: The version.
         :type version: str
-        :param inputs: The inputs.
-        :type inputs: List[pythoneda.shared.nix.flake.NixFlake]
         """
         super().__init__(
             "pythoneda-shared-domain",
             version,
             self.url_for,
-            inputs,
+            [
+                FlakeUtilsNixFlake("v1.0.0"),
+                NixosNixFlake("23.11"),
+                PythonedaSharedBannerNixFlake("0.0.47"),
+            ],
             "Support for event-driven architectures in Python",
             "https://github.com/pythoneda-shared/domain",
             "S",
