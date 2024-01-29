@@ -1,4 +1,4 @@
-// templates/pythoneda/flake.stg
+// templates/pythoneda/FlakeNix.stg
 //
 // This file defines the template for PythonEDA-related Nix flakes.
 //
@@ -143,7 +143,7 @@ root(flake) ::= <<
               echo "Creating $out/bin/${entrypoint-path}"
               echo '#!/usr/bin/env sh' \> $out/bin/${entrypoint-path}
               echo "export PYTHONPATH=$PYTHONPATH" \>\> $out/bin/${entrypoint-path}
-              echo "Running code-request.ipynb" \>> $out/bin/${entrypoint-path}
+              echo "Running code-request.ipynb" \>\> $out/bin/${entrypoint-path}
               echo "jupyter lab ./code-request.ipynb" \>\> $out/bin/${entrypoint-path}
               chmod +x $out/bin/${entrypoint-path}
               ls -lia $out/bin
