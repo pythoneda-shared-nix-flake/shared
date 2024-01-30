@@ -586,7 +586,7 @@ class NixFlake(Entity):
         except subprocess.CalledProcessError as err:
             NixFlake.logger().error(err.stdout)
             NixFlake.logger().error(err.stderr)
-            raise FlakeLockUpdateFailed(repositoryFolder, flakeSubfolder)
+            raise FlakeLockUpdateFailed(repositoryFolder, subfolder, err.stderr)
 
         return True
 

@@ -35,16 +35,18 @@ class FlakeLockUpdateFailed(Exception, BaseObject):
         - None
     """
 
-    def __init__(self, repositoryFolder: str, subfolder: str):
+    def __init__(self, repositoryFolder: str, subfolder: str, message: str):
         """
         Creates a new instance.
         :param repositoryFolder: The repository folder.
         :type repositoryFolder: str
         :param subfolder: The subfolder of the flake.nix file.
         :type subfolder: str
+        :param message: The error message.
+        :type message: str
         """
         super().__init__(
-            f'"nix flake update {subfolder}" in folder {repositoryFolder} failed'
+            f'"nix flake update {subfolder}" in folder {repositoryFolder} failed: {message}'
         )
 
 
