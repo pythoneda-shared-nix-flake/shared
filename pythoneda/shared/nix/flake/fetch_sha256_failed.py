@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix/flake/flake_lock_update_failed.py
+pythoneda/shared/nix/flake/fetch_sha256_failed.py
 
-This file defines the FlakeLockUpdateFailed class.
+This file defines the FetchSha256Failed class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -22,31 +22,31 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from pythoneda.shared import BaseObject
 
 
-class FlakeLockUpdateFailed(Exception, BaseObject):
+class FetchSha256Failed(Exception, BaseObject):
     """
-    Running nix flake update failed.
+    Running nix-prefetch-git failed.
 
-    Class name: FlakeLockUpdateFailed
+    Class name: FetchSha256Failed
 
     Responsibilities:
-        - Represent the error when running nix flake update.
+        - Represent the error when running nix-prefetch-git.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, repositoryFolder: str, subfolder: str, message: str):
+    def __init__(self, url: str, rev: str, message: str):
         """
-        Creates a new instance.
-        :param repositoryFolder: The repository folder.
-        :type repositoryFolder: str
-        :param subfolder: The subfolder of the flake.nix file.
-        :type subfolder: str
+        Creates a new FetchSha256Failed instance.
+        :param url: The repository url.
+        :type url: str
+        :param rev: The repository revision.
+        :type rev: str
         :param message: The error message.
         :type message: str
         """
         super().__init__(
-            f'"nix flake update {subfolder}" in folder {repositoryFolder} failed: {message}'
+            f'"nix-prefetch-git --quiet --url {url} --rev {rev}" failed: {message}'
         )
 
 

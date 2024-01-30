@@ -19,14 +19,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import asyncio
+from .fetch_sha256_failed import FetchSha256Failed
 from .flake_lock_update_failed import FlakeLockUpdateFailed
+import json
+import os
 from .license import License
 from .nix_flake_input import NixFlakeInput
-import asyncio
-import os
 from pathlib import Path
 from pythoneda.shared import attribute, primary_key_attribute, Entity
 from pythoneda.shared.git import GitAdd, GitInit
+import re
 from stringtemplate3 import PathGroupLoader, StringTemplateGroup
 import subprocess
 import tempfile
@@ -589,6 +592,71 @@ class NixFlake(Entity):
             raise FlakeLockUpdateFailed(repositoryFolder, subfolder, err.stderr)
 
         return True
+
+    @classmethod
+    async def fetch_sha256(cls, url: str, rev: str) -> str:
+        """
+        Retrieves the sha256 checksum for given url.
+        :param url: The repository url.
+        :type url: str
+        :param rev: The revision.
+        :type rev: str
+        :return: The sha256 value.
+        :rtype: str
+        """
+
+        completed_process = subprocess.run(
+            ["nix-prefetch-git", "--quiet", url, "--rev", rev],
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+        result = None
+
+        if completed_process.returncode == 0:
+            result = json.loads(completed_process.stdout).get("sha256", None)
+
+        if result is None:
+            raise FetchSha256Failed(url, rev, completed_process.stderr)
+
+        return result
+
+    @classmethod
+    async def update_sha256(
+        cls, sha256: str, repositoryFolder: str, flakeSubfolder: str = None
+    ):
+        """
+        Updates the sha256 checksum in the flake.nix file.
+        :param sha256: The sha256 checksum.
+        :type sha256: str
+        :param repositoryFolder: The repository folder.
+        :type repositoryFolder: str
+        :param flakeSubfolder: The subfolder of the flake.nix file.
+        :type flakeSubfolder: str
+        """
+        folder = repositoryFolder
+
+        if flakeSubfolder is not None:
+            folder = os.path.join(folder, flakeSubfolder)
+
+        # Regular expression pattern to match the sha256 line
+        sha256_pattern = r'(sha256\s*=\s*")[^"]*(";)'
+
+        flake_nix = os.path.join(folder, "flake.nix")
+        # Read the file contents
+        with open(flake_nix, "r") as file:
+            file_contents = file.read()
+
+            # Replace the sha256 value using regular expression
+            updated_contents = re.sub(
+                sha256_pattern, r"\g<1>" + sha256 + r"\2", file_contents
+            )
+
+        # Write the updated contents back to the file
+        with open(flake_nix, "w") as file:
+            file.write(updated_contents)
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

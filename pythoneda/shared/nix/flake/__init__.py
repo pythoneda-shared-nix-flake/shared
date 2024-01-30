@@ -30,6 +30,7 @@ from .pythoneda_shared_banner_nix_flake import (
 from .pythoneda_shared_domain_nix_flake import (
     PythonedaSharedDomainNixFlake,
 )
+from .fetch_sha256_failed import FetchSha256Failed
 from .flake_lock_update_failed import FlakeLockUpdateFailed
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
 from .nix_flake_metadata import NixFlakeMetadata
