@@ -19,7 +19,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import asyncio
 from .fetch_sha256_failed import FetchSha256Failed
 from .flake_lock_update_failed import FlakeLockUpdateFailed
 import json
@@ -29,6 +28,7 @@ from .nix_flake_input import NixFlakeInput
 from pathlib import Path
 from pythoneda.shared import attribute, primary_key_attribute, Entity
 from pythoneda.shared.git import GitAdd, GitInit
+from pythoneda.shared.shell import AsyncShell
 import re
 from stringtemplate3 import PathGroupLoader, StringTemplateGroup
 import subprocess
@@ -374,13 +374,13 @@ class NixFlake(Entity):
             result = super()._get_attribute_to_json(varName)
         return result
 
-    def generate_files(self, flakeFolder: str):
+    async def generate_files(self, flakeFolder: str):
         """
         Generates the files.
         :param flakeFolder: The flake folder.
         :type flakeFolder: str
         """
-        self.generate_flake(flakeFolder)
+        await self.generate_flake(flakeFolder)
 
     def parent_folder(self, path: str) -> str:
         """
@@ -419,7 +419,7 @@ class NixFlake(Entity):
         """
         return NixFlakeInput(self.name, self.version, self.url_for, self.inputs)
 
-    def generate_flake(self, flakeFolder: str) -> str:
+    async def generate_flake(self, flakeFolder: str) -> str:
         """
         Generates the flake from a template.
         :param flakeFolder: The flake folder.
@@ -427,7 +427,7 @@ class NixFlake(Entity):
         :return: The generated flake.nix file.
         :rtype: str
         """
-        self.process_template(
+        await self.process_template(
             flakeFolder,
             "FlakeNix",
             Path(self.templates_folder) / self.template_subfolder,
@@ -436,7 +436,7 @@ class NixFlake(Entity):
         )
         return Path(flakeFolder) / "flake.nix"
 
-    def process_template(
+    async def process_template(
         self,
         outputFolder: str,
         groupName: str,
@@ -472,21 +472,21 @@ class NixFlake(Entity):
         with open(Path(outputFolder) / outputFileName, "w") as output_file:
             output_file.write(str(root_template))
 
-    def git_add_files(self, gitAdd):
+    async def git_add_files(self, gitAdd):
         """
         Adds the generated files to git.
         :param gitAdd: The GitAdd instance.
         :type gitAdd: pythoneda.shared.git.GitAdd
         """
-        self.git_add_flake(gitAdd)
+        await self.git_add_flake(gitAdd)
 
-    def git_add_flake(self, gitAdd):
+    async def git_add_flake(self, gitAdd):
         """
         Adds the generated flake.nix file to git.
         :param gitAdd: The GitAdd instance.
         :type gitAdd: pythoneda.shared.git.GitAdd
         """
-        gitAdd.add("flake.nix")
+        await gitAdd.add("flake.nix")
 
     async def run(self) -> str:
         """
@@ -496,47 +496,16 @@ class NixFlake(Entity):
         """
         result = None
         with tempfile.TemporaryDirectory() as tmp_folder:
-            self.generate_files(tmp_folder)
-            GitInit(tmp_folder).init()
-            self.git_add_files(GitAdd(tmp_folder))
+            await self.generate_files(tmp_folder)
+            await GitInit(tmp_folder).init()
+            await self.git_add_files(GitAdd(tmp_folder))
 
             NixFlake.logger().debug(f'Launching "nix run" on {tmp_folder}')
-            try:
-                process = await asyncio.create_subprocess_shell(
-                    "nix run .",
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    cwd=tmp_folder,
-                    bufsize=0,
-                    universal_newlines=False,
-                    env={"PATH": os.environ["PATH"]},
-                )
+            process, _, _ = await AsyncShell(
+                ["command", "nix", "run", "."], tmp_folder
+            ).run()
 
-                async def read_stream(stream, callback):
-                    while True:
-                        line = await stream.readline()
-                        if line:
-                            callback(line)
-                        else:
-                            break
-
-                def print_stdout(line: str):
-                    print(line.decode().rstrip())
-
-                def print_stderr(line: str):
-                    NixFlake.logger().info(line.decode().rstrip())
-
-                await asyncio.gather(
-                    read_stream(process.stdout, print_stdout),
-                    read_stream(process.stderr, print_stderr),
-                )
-
-                await process.wait()
-
-                result = await self.eval(tmp_folder)
-
-            except subprocess.CalledProcessError as err:
-                NixFlake.logger().error(err.stderr)
+            result = await self.eval(tmp_folder)
 
         NixFlake.logger().debug(f'"nix run" finished: {result}')
 
@@ -548,21 +517,9 @@ class NixFlake(Entity):
         :return: The path of the derivation.
         :rtype: str
         """
-        result = None
-        try:
-            execution = subprocess.run(
-                ["nix", "eval", "."],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=path,
-            )
-            result = execution.stdout
-        except subprocess.CalledProcessError as err:
-            NixFlake.logger().error(err)
-            NixFlake.logger().error(err.stderr)
+        process, _, _ = await AsyncShell(["command", "nix", "eval", "."], path)
 
-        return result
+        return process.stdout
 
     @classmethod
     async def update_flake_lock(cls, repositoryFolder: str, flakeSubfolder: str = None):
@@ -577,19 +534,16 @@ class NixFlake(Entity):
         if flakeSubfolder is not None:
             subfolder = f"{flakeSubfolder}/"
 
-        try:
-            subprocess.run(
-                ["nix", "flake", "update", subfolder],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=False,
-                cwd=repositoryFolder,
-            )
-        except subprocess.CalledProcessError as err:
-            NixFlake.logger().error(err.stdout)
-            NixFlake.logger().error(err.stderr)
-            raise FlakeLockUpdateFailed(repositoryFolder, subfolder, err.stderr)
+        process, stdout, stderr = await AsyncShell(
+            ["command", "nix", "flake", "update", subfolder], repositoryFolder
+        ).run()
+
+        if process.returncode != 0:
+            if stdout != "":
+                NixFlake.logger().debug(stdout)
+            if stderr != "":
+                NixFlake.logger().error(stderr)
+                raise FlakeLockUpdateFailed(repositoryFolder, subfolder, stderr)
 
         return True
 
@@ -604,22 +558,18 @@ class NixFlake(Entity):
         :return: The sha256 value.
         :rtype: str
         """
-
-        completed_process = subprocess.run(
-            ["nix-prefetch-git", "--quiet", url, "--rev", rev],
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-
         result = None
 
-        if completed_process.returncode == 0:
-            result = json.loads(completed_process.stdout).get("sha256", None)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            process, stdout, stderr = await AsyncShell(
+                ["nix-prefetch-git", "--quiet", url, "--rev", rev]
+            ).run()
 
-        if result is None:
-            raise FetchSha256Failed(url, rev, completed_process.stderr)
+            if process.returncode == 0:
+                result = json.loads(stdout).get("sha256", None)
+
+            if result is None:
+                raise FetchSha256Failed(url, rev, stderr)
 
         return result
 

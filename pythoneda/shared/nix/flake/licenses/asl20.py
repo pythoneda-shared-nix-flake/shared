@@ -49,7 +49,7 @@ class Asl20(License):
         super().__init__(
             f""" Apache License 2.0
 
- Copyright (C) {copyrightYear} {copyrightHolder} {url}
+ Copyright (C) {copyrightYear}-today {copyrightHolder} {url}
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

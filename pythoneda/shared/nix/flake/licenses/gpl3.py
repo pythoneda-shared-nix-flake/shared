@@ -50,7 +50,7 @@ class Gpl3(License):
             f""" GNU GENERAL PUBLIC LICENSE
  Version 3, 29 June 2007
 
- Copyright (C) {copyrightYear} {copyrightHolder} {url}
+ Copyright (C) {copyrightYear}-today {copyrightHolder} {url}
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
