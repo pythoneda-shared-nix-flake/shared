@@ -19,7 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from .github_url_for import GithubUrlFor
+from .github_url_template import GithubUrlTemplate
 import json
 from .nix_flake_input import NixFlakeInput
 from .nix_flake_input_relationship import NixFlakeInputRelationship
@@ -194,7 +194,7 @@ class NixFlakeMetadata(Entity):
                 result = NixFlakeInput(
                     node,
                     aux_version,
-                    GithubUrlFor(aux_owner, aux_repo, aux_dir).url_for,
+                    GithubUrlTemplate(aux_owner, aux_repo, aux_dir).url_template,
                     inputs,
                 )
                 self._inputs_by_node[node] = result

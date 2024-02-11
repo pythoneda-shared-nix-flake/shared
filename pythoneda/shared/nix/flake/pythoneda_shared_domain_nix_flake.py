@@ -50,11 +50,11 @@ class PythonedaSharedDomainNixFlake(PythonedaNixFlake):
         super().__init__(
             "pythoneda-shared-domain",
             version,
-            self.url_for,
+            "github:pythoneda-shared-def/domain/{version}",
             [
-                FlakeUtilsNixFlake("v1.0.0"),
-                NixosNixFlake("23.11"),
-                PythonedaSharedBannerNixFlake("0.0.47"),
+                FlakeUtilsNixFlake.default(),
+                NixosNixFlake.default(),
+                PythonedaSharedBannerNixFlake.default(),
             ],
             "Support for event-driven architectures in Python",
             "https://github.com/pythoneda-shared/domain",
@@ -63,15 +63,14 @@ class PythonedaSharedDomainNixFlake(PythonedaNixFlake):
             "D",
         )
 
-    def url_for(self, version: str) -> str:
+    @classmethod
+    def default(cls):
         """
-        Retrieves the url for given version.
-        :param version: The version.
-        :type version: str
-        :return: The url.
-        :rtype: str
+        Retrieves the default version of the pythoneda-shared/banner Nix flake input.
+        :return: Such instance.
+        :rtype: pythoneda.shared.nix.flake.PythonedaSharedBannerNixFlake
         """
-        return f"github:pythoneda-shared-def/domain/{version}"
+        return cls("0.0.36")
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

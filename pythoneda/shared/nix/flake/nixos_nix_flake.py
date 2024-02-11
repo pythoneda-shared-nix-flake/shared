@@ -45,7 +45,7 @@ class NixosNixFlake(NixFlake):
         super().__init__(
             "nixos",
             version,
-            self.url_for,
+            "github:NixOS/nixpkgs/{version}",
             [],
             None,
             "A collection of packages for the Nix package manager",
@@ -63,17 +63,7 @@ class NixosNixFlake(NixFlake):
         :return: Such instance.
         :rtype: pythoneda.shared.nix.flake.NixosNixFlake
         """
-        return cls("nixos-23.05")
-
-    def url_for(self, version: str) -> str:
-        """
-        Retrieves the url for given version.
-        :param version: The version.
-        :type version: str
-        :return: The url.
-        :rtype: str
-        """
-        return f"github:NixOS/nixpkgs/{version}"
+        return cls("23.11")
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

@@ -48,7 +48,7 @@ class PythonedaSharedBannerNixFlake(NixFlake):
         super().__init__(
             "pythoneda-shared-banner",
             version,
-            self.url_for,
+            "github:pythoneda-shared-pythonlang-def/banner/{version}",
             [FlakeUtilsNixFlake.default(), NixosNixFlake.default()],
             "pythoneda",
             "Banner for PythonEDA projects",
@@ -59,16 +59,6 @@ class PythonedaSharedBannerNixFlake(NixFlake):
             "rydnr",
         )
 
-    def url_for(self, version: str) -> str:
-        """
-        Retrieves the url for given version.
-        :param version: The version.
-        :type version: str
-        :return: The url.
-        :rtype: str
-        """
-        return f"github:pythoneda-shared-def/banner/{version}"
-
     @classmethod
     def default(cls):
         """
@@ -76,7 +66,7 @@ class PythonedaSharedBannerNixFlake(NixFlake):
         :return: Such instance.
         :rtype: pythoneda.shared.nix.flake.PythonedaSharedBannerNixFlake
         """
-        return cls("0.0.13")
+        return cls("0.0.49")
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

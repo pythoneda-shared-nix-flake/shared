@@ -46,7 +46,7 @@ class FlakeUtilsNixFlake(NixFlake):
         super().__init__(
             "flake-utils",
             version,
-            self.url_for,
+            "github:numtide/flake-utils/{version}",
             [],
             None,
             "Pure Nix flake utility functions",
@@ -65,16 +65,6 @@ class FlakeUtilsNixFlake(NixFlake):
         :rtype: pythoneda.shared.nix.flake.FlakeUtilsNixFlake
         """
         return cls("v1.0.0")
-
-    def url_for(self, version: str) -> str:
-        """
-        Retrieves the url for given version.
-        :param version: The version.
-        :type version: str
-        :return: The url.
-        :rtype: str
-        """
-        return f"github:numtide/flake-utils/{version}"
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

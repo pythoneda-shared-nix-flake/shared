@@ -23,7 +23,7 @@ import datetime
 from .nix_flake import NixFlake
 from path import Path
 from pythoneda.shared import attribute
-from typing import List, Callable
+from typing import List
 
 
 class PythonedaNixFlake(NixFlake):
@@ -45,7 +45,7 @@ class PythonedaNixFlake(NixFlake):
         self,
         name: str,
         version: str,
-        url: Callable[[str], str],
+        urlTemplate: str,
         inputs: List,
         description: str,
         homepage: str,
@@ -60,8 +60,8 @@ class PythonedaNixFlake(NixFlake):
         :type name: str
         :param version: The version of the flake.
         :type version: str
-        :param url: The url.
-        :type url: str
+        :param urlTemplate: The url template.
+        :type urlTemplate: str
         :param inputs: The inputs.
         :type inputs: List[pythoneda.shared.nix.flake.NixFlakeInput]
         :param description: The flake description.
@@ -80,7 +80,7 @@ class PythonedaNixFlake(NixFlake):
         super().__init__(
             name,
             version,
-            url,
+            urlTemplate,
             inputs,
             "pythoneda",
             description,

@@ -33,7 +33,7 @@ import re
 from stringtemplate3 import PathGroupLoader, StringTemplateGroup
 import subprocess
 import tempfile
-from typing import Callable, List
+from typing import List
 
 
 class NixFlake(Entity):
@@ -55,7 +55,7 @@ class NixFlake(Entity):
         self,
         name: str,
         version: str,
-        urlFor: Callable[[str], str],
+        urlTemplate: str,
         inputs: List,
         templateSubfolder: str,
         description: str,
@@ -72,8 +72,8 @@ class NixFlake(Entity):
         :type name: str
         :param version: The version of the flake.
         :type version: str
-        :param urlFor: The function to obtain the url from a given version.
-        :type urlFor: Callable[[str],str]
+        :param urlTemplate: The template to obtain the url from a given version.
+        :type urlTemplate: str
         :param inputs: The flake inputs.
         :type inputs: List[pythoneda.shared.nix.flake.NixFlakeInput]
         :param templateSubfolder: The template subfolder, if any.
@@ -96,7 +96,7 @@ class NixFlake(Entity):
         super().__init__()
         self._name = name
         self._version = version
-        self._url_for = urlFor
+        self._url_template = urlTemplate
         self._inputs = list({obj.name: obj.to_input() for obj in inputs}.values())
         self._template_subfolder = templateSubfolder
         self._description = description
@@ -146,13 +146,13 @@ class NixFlake(Entity):
 
     @property
     @primary_key_attribute
-    def url_for_function(self) -> Callable[[str], str]:
+    def url_template(self) -> str:
         """
-        Retrieves the function to obtain the url of the flake from a given version.
-        :return: Such function.
-        :rtype: Callable[[str],str]
+        Retrieves the template to obtain the url of the flake from a given version.
+        :return: Such template.
+        :rtype: str
         """
-        return self._url_for
+        return self._url_template
 
     @property
     @attribute
@@ -417,7 +417,7 @@ class NixFlake(Entity):
         :return: The input.
         :rtype: pythoneda.shared.nix.flake.NixFlakeInput
         """
-        return NixFlakeInput(self.name, self.version, self.url_for, self.inputs)
+        return NixFlakeInput(self.name, self.version, self.url_template, self.inputs)
 
     async def generate_flake(self, flakeFolder: str) -> str:
         """
@@ -434,6 +434,7 @@ class NixFlake(Entity):
             "root",
             "flake.nix",
         )
+
         return Path(flakeFolder) / "flake.nix"
 
     async def process_template(
@@ -560,16 +561,15 @@ class NixFlake(Entity):
         """
         result = None
 
-        with tempfile.TemporaryDirectory() as temp_dir:
-            process, stdout, stderr = await AsyncShell(
-                ["nix-prefetch-git", "--quiet", url, "--rev", rev]
-            ).run()
+        process, stdout, stderr = await AsyncShell(
+            ["nix-prefetch-git", "--quiet", url, "--rev", rev]
+        ).run_in_a_temporary_folder()
 
-            if process.returncode == 0:
-                result = json.loads(stdout).get("sha256", None)
+        if process.returncode == 0:
+            result = json.loads(stdout).get("sha256", None)
 
-            if result is None:
-                raise FetchSha256Failed(url, rev, stderr)
+        if result is None:
+            raise FetchSha256Failed(url, rev, stderr)
 
         return result
 

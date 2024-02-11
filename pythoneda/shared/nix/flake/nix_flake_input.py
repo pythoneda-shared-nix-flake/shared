@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda.shared import attribute, primary_key_attribute, ValueObject
 import re
-from typing import Callable, List
+from typing import List
 
 
 class NixFlakeInput(ValueObject):
@@ -37,24 +37,22 @@ class NixFlakeInput(ValueObject):
         - pythoneda.shared.ValueObject
     """
 
-    def __init__(
-        self, name: str, version: str, urlFor: Callable[[str], str], inputs: List = []
-    ):
+    def __init__(self, name: str, version: str, urlTemplate: str, inputs: List = []):
         """
         Creates a new NixFlakeInput instance.
         :param name: The name of the input.
         :type name: str
         :param version: The version of the input.
         :type version: str
-        :param urlFor: The function to retrieve the url for a given version.
-        :type urlFor: Callable[[str], str]
+        :param urlTemplate: The template to retrieve the url for a given version.
+        :type urlTemplate: str
         :param inputs: Its own inputs.
         :type inputs: Dict
         """
         super().__init__()
         self._name = name
         self._version = version
-        self._url_for = urlFor
+        self._url_template = urlTemplate
         self._inputs = [aux for aux in inputs if aux.name != name]
         self._follows = []
 
@@ -88,23 +86,23 @@ class NixFlakeInput(ValueObject):
         return self._version
 
     @property
-    def url_for(self) -> Callable[[str], str]:
+    @attribute
+    def url_template(self) -> str:
         """
-        Retrieves a function to obtain the url for a given version.
-        :return: Such function.
-        :rtype: Callable[[str], str]
+        Retrieves the template to get the url for given version.
+        :return: The template.
         """
-        return self._url_for
+        return self._url_template
 
     @property
-    @attribute
     def url(self) -> str:
         """
         Retrieves the url.
         :return: Such information.
         :rtype: str
         """
-        return self.url_for(self.version)
+        print(f"*** {self.url_template}")
+        return self.url_template.format(version=self.version)
 
     @property
     @attribute
@@ -178,7 +176,7 @@ class NixFlakeInput(ValueObject):
         :return: A copy of this dependency, updated.
         :rtype: pythoneda.shared.nix.flake.NixFlakeInput
         """
-        return self.__class__(self.name, version, self.url_for, self.inputs)
+        return self.__class__(self.name, version, self.url_template, self.inputs)
 
     @property
     def normalized_name(self) -> str:
