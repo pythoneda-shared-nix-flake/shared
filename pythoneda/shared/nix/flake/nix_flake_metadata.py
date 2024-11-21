@@ -29,7 +29,6 @@ from typing import Dict, List
 
 
 class NixFlakeMetadata(Entity):
-
     """
     Represents Nix flake metadata.
 
@@ -186,7 +185,7 @@ class NixFlakeMetadata(Entity):
             if data.get("type", None) == "github":
                 aux_owner = data["owner"]
                 aux_repo = data["repo"]
-                aux_version = data["ref"]
+                aux_version = data.get("ref", None)
                 aux_dir = data.get("dir", None)
 
                 inputs = self._get_inputs(node)
