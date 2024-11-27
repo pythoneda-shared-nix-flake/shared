@@ -2,7 +2,7 @@
 """
 pythoneda/shared/nix/flake/__init__.py
 
-This file ensures pythoneda.shared.nix/flake is a package.
+This file ensures pythoneda.shared.nix.flake is a package.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -24,11 +24,11 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from .github_url_template import GithubUrlTemplate
 from .license import License
 from .pythoneda_nix_flake import PythonedaNixFlake
-from .pythoneda_shared_banner_nix_flake import (
-    PythonedaSharedBannerNixFlake,
+from .pythoneda_shared_pythonlang_banner_nix_flake import (
+    PythonedaSharedPythonlangBannerNixFlake,
 )
-from .pythoneda_shared_domain_nix_flake import (
-    PythonedaSharedDomainNixFlake,
+from .pythoneda_shared_pythonlang_domain_nix_flake import (
+    PythonedaSharedPythonlangDomainNixFlake,
 )
 from .fetch_sha256_failed import FetchSha256Failed
 from .flake_lock_update_failed import FlakeLockUpdateFailed

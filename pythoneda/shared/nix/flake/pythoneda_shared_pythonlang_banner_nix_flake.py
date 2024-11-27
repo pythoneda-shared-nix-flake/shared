@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix/flake/pythoneda_shared_domain_input.py
+pythoneda/shared/nix/flake/pythoneda_shared_pythonlang_banner_nix_flake.py
 
-This file defines the PythonedaSharedDomainInput class.
+This file defines the PythonedaSharedPythonlangBannerNixFlake class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -20,22 +20,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
+from .nix_flake import NixFlake
 from .nixos_nix_flake import NixosNixFlake
-from .pythoneda_nix_flake import PythonedaNixFlake
-from .pythoneda_shared_banner_nix_flake import PythonedaSharedBannerNixFlake
-from typing import List
 
 
-class PythonedaSharedDomainNixFlake(PythonedaNixFlake):
-
+class PythonedaSharedPythonlangBannerNixFlake(NixFlake):
     """
-    Nix flake pythoneda-shared/domain.
+    Nix flake for pythoneda-shared-pythonlang/banner.
 
-    Class name: PythonedaSharedDomainNixFlake
+    Class name: PythonedaSharedPythonlangBannerNixFlake
 
     Responsibilities:
-        - Provides a way to build pythoneda-shared/domain.
-        - Provides a way to run pythoneda-shared/domain.
+        - Provides a way to build pythoneda-shared-pythonlang/banner.
+        - Provides a way to run pythoneda-shared-pythonlang/banner.
 
     Collaborators:
         - pythoneda.shared.nix.flake.NixFlake
@@ -43,24 +40,22 @@ class PythonedaSharedDomainNixFlake(PythonedaNixFlake):
 
     def __init__(self, version: str):
         """
-        Creates a new PythonedaSharedDomainNixFlake instance.
+        Creates a new PythonedaSharedPythonlangBannerNixFlake instance.
         :param version: The version.
         :type version: str
         """
         super().__init__(
-            "pythoneda-shared-domain",
+            "pythoneda-shared-pythonlang-banner",
             version,
-            "github:pythoneda-shared-def/domain/{version}",
-            [
-                FlakeUtilsNixFlake.default(),
-                NixosNixFlake.default(),
-                PythonedaSharedBannerNixFlake.default(),
-            ],
-            "Support for event-driven architectures in Python",
-            "https://github.com/pythoneda-shared/domain",
-            "S",
-            "D",
-            "D",
+            "github:pythoneda-shared-pythonlang-def/banner/{version}",
+            [FlakeUtilsNixFlake.default(), NixosNixFlake.default()],
+            "pythoneda",
+            "Banner for PythonEDA projects",
+            "https://github.com/pythoneda-shared-pythonlang/banner",
+            "gpl3",
+            ["rydnr <github@acm-sl.org>"],
+            2023,
+            "rydnr",
         )
 
     @classmethod
@@ -70,7 +65,7 @@ class PythonedaSharedDomainNixFlake(PythonedaNixFlake):
         :return: Such instance.
         :rtype: pythoneda.shared.nix.flake.PythonedaSharedBannerNixFlake
         """
-        return cls("0.0.36")
+        return cls("0.0.49")
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
