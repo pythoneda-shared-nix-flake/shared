@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix/flake/nixos_nix_flake.py
+pythoneda/shared/nix/flake/nixpkgs_nix_flake.py
 
-This file defines the NikosNixFlake class.
+This file defines the NixpkgsNixFlake class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -22,12 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from .nix_flake import NixFlake
 
 
-class NixosNixFlake(NixFlake):
-
+class NixpkgsNixFlake(NixFlake):
     """
-    Nix flake for NixOS.
+    Nix flake for NixOS' nixpkgs.
 
-    Class name: NixosNixFlake
+    Class name: NixpkgsNixFlake
 
     Responsibilities:
         - Packages NixOS's nixpkgs as a Nix flake.
@@ -38,7 +37,7 @@ class NixosNixFlake(NixFlake):
 
     def __init__(self, version: str):
         """
-        Creates a new NixosNixFlake instance.
+        Creates a new NixpkgsNixFlake instance.
         :param version: The version.
         :type version: str
         """
@@ -61,9 +60,9 @@ class NixosNixFlake(NixFlake):
         """
         Retrieves the default version of the NixOS/nixpkgs Nix flake input.
         :return: Such instance.
-        :rtype: pythoneda.shared.nix.flake.NixosNixFlake
+        :rtype: pythoneda.shared.nix.flake.NixpkgsNixFlake
         """
-        return cls("23.11")
+        return cls("24.05")
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

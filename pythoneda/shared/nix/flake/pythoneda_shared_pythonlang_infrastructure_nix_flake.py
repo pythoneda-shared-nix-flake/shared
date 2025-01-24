@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/nix/flake/pythoneda_shared_pythonlang_domain_nix_flake.py
+pythoneda/shared/nix/flake/pythoneda_shared_pythonlang_infrastructure_nix_flake.py
 
-This file defines the PythonedaSharedPythonlangDomainNixFlake class.
+This file defines the PythonedaSharedPythonlangInfrastructureNixFlake class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-nix-flake/shared
 
@@ -25,18 +25,20 @@ from .pythoneda_nix_flake import PythonedaNixFlake
 from .pythoneda_shared_pythonlang_banner_nix_flake import (
     PythonedaSharedPythonlangBannerNixFlake,
 )
+from .pythoneda_shared_pythonlang_domain_nix_flake import (
+    PythonedaSharedPythonlangDomainNixFlake,
+)
 from typing import List
 
 
-class PythonedaSharedPythonlangDomainNixFlake(PythonedaNixFlake):
+class PythonedaSharedPythonlangInfrastructureNixFlake(PythonedaNixFlake):
     """
-    Nix flake pythoneda-shared-pythonlang/domain.
+    Nix flake pythoneda-shared-pythonlang/infrastructure.
 
-    Class name: PythonedaSharedPythonlangDomainNixFlake
+    Class name: PythonedaSharedPythonlangInfrastructureNixFlake
 
     Responsibilities:
-        - Provides a way to build pythoneda-shared-pythonlang/domain.
-        - Provides a way to run pythoneda-shared-pythonlang/domain.
+        - Provides a way to build pythoneda-shared-pythonlang/infrastructure.
 
     Collaborators:
         - pythoneda.shared.nix.flake.NixFlake
@@ -44,34 +46,35 @@ class PythonedaSharedPythonlangDomainNixFlake(PythonedaNixFlake):
 
     def __init__(self, version: str):
         """
-        Creates a new PythonedaSharedPythonlangDomainNixFlake instance.
+        Creates a new PythonedaSharedPythonlangInfrastructureNixFlake instance.
         :param version: The version.
         :type version: str
         """
         super().__init__(
-            "pythoneda-shared-pythonlang-domain",
+            "pythoneda-shared-pythonlang-infrastructure",
             version,
-            "github:pythoneda-shared-pythonlang-def/domain/{version}",
+            "github:pythoneda-shared-pythonlang-def/infrastructure/{version}",
             [
                 FlakeUtilsNixFlake.default(),
                 NixpkgsNixFlake.default(),
                 PythonedaSharedPythonlangBannerNixFlake.default(),
+                PythonedaSharedPythonlangDomainNixFlake.default(),
             ],
-            "Support for event-driven architectures in Python",
-            "https://github.com/pythoneda-shared-pythonlang/domain",
+            "Shared library for infrastructure layers",
+            "https://github.com/pythoneda-shared-pythonlang/infrastructure",
             "S",
             "D",
-            "D",
+            "I",
         )
 
     @classmethod
-    def default(cls):
+    def default(cls) -> "PythonedaSharedPythonlangInfrastructureNixFlake":
         """
-        Retrieves the default version of the pythoneda-shared-pythonlang/domain Nix flake.
+        Retrieves the default version of the pythoneda-shared-pythonlang/infrastructure Nix flake.
         :return: Such instance.
-        :rtype: pythoneda.shared.nix.flake.PythonedaSharedPythonlangDomainNixFlake
+        :rtype: pythoneda.shared.nix.flake.PythonedaSharedPythonlangInfrastructureNixFlake
         """
-        return cls("0.0.110")
+        return cls("0.0.85")
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

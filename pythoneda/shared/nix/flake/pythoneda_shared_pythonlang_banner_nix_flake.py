@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .flake_utils_nix_flake import FlakeUtilsNixFlake
 from .nix_flake import NixFlake
-from .nixos_nix_flake import NixosNixFlake
+from .nixpkgs_nix_flake import NixpkgsNixFlake
 
 
 class PythonedaSharedPythonlangBannerNixFlake(NixFlake):
@@ -48,7 +48,7 @@ class PythonedaSharedPythonlangBannerNixFlake(NixFlake):
             "pythoneda-shared-pythonlang-banner",
             version,
             "github:pythoneda-shared-pythonlang-def/banner/{version}",
-            [FlakeUtilsNixFlake.default(), NixosNixFlake.default()],
+            [FlakeUtilsNixFlake.default(), NixpkgsNixFlake.default()],
             "pythoneda",
             "Banner for PythonEDA projects",
             "https://github.com/pythoneda-shared-pythonlang/banner",
@@ -65,7 +65,7 @@ class PythonedaSharedPythonlangBannerNixFlake(NixFlake):
         :return: Such instance.
         :rtype: pythoneda.shared.nix.flake.PythonedaSharedBannerNixFlake
         """
-        return cls("0.0.49")
+        return cls("0.0.50")
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

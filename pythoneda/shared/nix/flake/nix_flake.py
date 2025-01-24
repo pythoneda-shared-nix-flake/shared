@@ -37,7 +37,6 @@ from typing import List
 
 
 class NixFlake(Entity):
-
     """
     Represents a Nix flake.
 
@@ -509,6 +508,53 @@ class NixFlake(Entity):
             result = await self.eval(tmp_folder)
 
         NixFlake.logger().debug(f'"nix run" finished: {result}')
+
+        return result
+
+    async def build(self) -> str:
+        """
+        Builds this flake, and returns the path to the derivation.
+        :return: Such path.
+        :rtype: str
+        """
+        result = None
+        with tempfile.TemporaryDirectory() as tmp_folder:
+            await self.generate_files(tmp_folder)
+            await GitInit(tmp_folder).init()
+            await self.git_add_files(GitAdd(tmp_folder))
+
+            NixFlake.logger().debug(f'Launching "nix build" on {tmp_folder}')
+            process, _, _ = await AsyncShell(
+                ["command", "nix", "build", "."], tmp_folder
+            ).run()
+
+            result = os.path.realpath(os.path.join(tmp_folder, "result"))
+
+        NixFlake.logger().debug(f'"nix build" finished: {result}')
+
+        return result
+
+    async def develop(self, cmd: List[str]) -> str:
+        """
+        Runs given command inside the flake's development environment.
+        :param cmd: The command to run.
+        :type cmd: List[str]
+        :return: The command output.
+        :rtype: str
+        """
+        result = None
+        with tempfile.TemporaryDirectory() as tmp_folder:
+            await self.generate_files(tmp_folder)
+            await GitInit(tmp_folder).init()
+            await self.git_add_files(GitAdd(tmp_folder))
+
+            NixFlake.logger().debug(f'Launching "nix develop -c {cmd}" on {tmp_folder}')
+            args = ["command", "nix", "develop", "--impure", "-c"] + cmd
+            env = {}
+            env["PYTHONEDA_NO_BANNER"] = "1"
+            _, result, _ = await AsyncShell(args=args, cwd=tmp_folder, env=env).run()
+
+        NixFlake.logger().debug(f'"nix develop -c {cmd}" finished: {result}')
 
         return result
 
