@@ -26,7 +26,7 @@ import os
 from .license import License
 from .nix_flake_input import NixFlakeInput
 from pathlib import Path
-from pythoneda.shared import attribute, primary_key_attribute, Entity
+from pythoneda.shared import attribute, primary_key_attribute, Entity, EventReference
 from pythoneda.shared.git import GitAdd, GitInit
 from pythoneda.shared.shell import AsyncShell
 import re
@@ -64,6 +64,7 @@ class NixFlake(Entity):
         copyrightYear: int,
         copyrightHolder: str,
         templatesFolder: str = None,
+        eventHistory: List[EventReference] = [],
     ):
         """
         Creates a new NixFlake instance.
@@ -91,8 +92,9 @@ class NixFlake(Entity):
         :type copyrightHolder: str
         :param templatesFolder: The folder with the templates.
         :type templatesFolder: str
+        :param eventHistory: The event history.
+        :type eventHistory: List[pythoneda.shared.EventReference]
         """
-        super().__init__()
         self._name = name
         self._version = version
         self._url_template = urlTemplate
@@ -113,6 +115,7 @@ class NixFlake(Entity):
 
         for bindable_input in self._inputs:
             bindable_input.bind(self)
+        super().__init__(eventHistory=eventHistory)
 
     @classmethod
     def empty(cls):

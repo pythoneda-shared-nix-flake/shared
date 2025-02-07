@@ -23,7 +23,7 @@ from .github_url_template import GithubUrlTemplate
 import json
 from .nix_flake_input import NixFlakeInput
 from .nix_flake_input_relationship import NixFlakeInputRelationship
-from pythoneda.shared import attribute, Entity
+from pythoneda.shared import attribute, Entity, EventReference
 import subprocess
 from typing import Dict, List
 
@@ -41,15 +41,18 @@ class NixFlakeMetadata(Entity):
         - None
     """
 
-    def __init__(self, metadata: Dict, flakeRef: str):
+    def __init__(
+        self, metadata: Dict, flakeRef: str, eventHistory: List[EventReference] = []
+    ):
         """
         Creates a new NixFlakeMetadata instance.
         :param metadata: The flake metadata.
         :type metadata: Dict
         :param flakeRef: The flake reference (either a folder or an url).
         :type flakeRef: str
+        :param eventHistory: The event history.
+        :type eventHistory: List[pythoneda.shared.EventReference]
         """
-        super().__init__()
         self._metadata = metadata
         self._flake_ref = flakeRef
         self._inputs = None
@@ -69,6 +72,7 @@ class NixFlakeMetadata(Entity):
         self._indirect_inputs_with_duplicates_with_different_versions = None
         self._all_relationships = None
         self._relationships_for_duplicated_nodes = None
+        super().__init__(eventHistory=eventHistory)
 
     @property
     @attribute
